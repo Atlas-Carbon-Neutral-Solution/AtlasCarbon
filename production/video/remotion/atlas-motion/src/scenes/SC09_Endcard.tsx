@@ -2,15 +2,20 @@ import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from "rem
 
 // SC09 — Endcard e CTA (script §5, TC 01:22-01:30, 8s @ 25fps = 200 frame)
 //
-// Renderizza SOLO le variabili confermate: V01 (palette istituzionale, linee guida
-// Atlas 2025), V03 (logo bianco ufficiale) e la ragione sociale legale (V15).
-// V04 (payoff) e V05 (CTA) sono vuote: per la regola §0.1 dello script, la riga va
-// omessa, non riempita con un valore plausibile.
+// Variabili usate, tutte confermate: V01 (palette), V02 (font: fallback
+// sans-serif geometrico, nessun font specificato nelle linee guida), V03
+// (logo bianco ufficiale), V04 (payoff, opzione A raccomandata dal
+// documento), V05 (CTA), e la ragione sociale legale (V15, dato
+// verificato: P.IVA e sede legale).
 
 const BG = "#14171a"; // base fredda industriale (§7.1) — non è uno dei due colori di marchio
 const AZZURRO = "#53a4db"; // V01
+const PAYOFF = "Il dato prima della promessa."; // V04 — opzione A, §8
+const CTA = "www.atlascarbonneutral.com"; // V05
 const RAGIONE_SOCIALE =
   "Atlas Carbon Neutral Solutions S.r.l. Società Benefit — P.IVA 14003650968 — Via Giuseppe Pecchio 1, 20131 Milano";
+
+const FONT = "Arial, Helvetica, sans-serif"; // V02 fallback §7.2
 
 const easeInOut = (frame: number, from: number, durationInFrames: number) =>
   interpolate(frame, [from, from + durationInFrames], [0, 1], {
@@ -21,28 +26,60 @@ const easeInOut = (frame: number, from: number, durationInFrames: number) =>
 export const SC09_Endcard: React.FC = () => {
   const frame = useCurrentFrame();
 
-  const logoIn = easeInOut(frame, 0, 9); // ~300ms @ 30fps timeline used by the studio preview
+  const logoIn = easeInOut(frame, 0, 9);
   const logoScale = interpolate(logoIn, [0, 1], [0.96, 1]);
-  const lineIn = easeInOut(frame, 15, 9);
+  const payoffIn = easeInOut(frame, 15, 9);
+  const ctaIn = easeInOut(frame, 30, 9);
+  const legalIn = easeInOut(frame, 45, 9);
   const closingBeat = easeInOut(frame, 170, 9);
 
   return (
-    <AbsoluteFill style={{ backgroundColor: BG }}>
+    <AbsoluteFill style={{ backgroundColor: BG, opacity: 1 - closingBeat * 0.08 }}>
       <AbsoluteFill
         style={{
           alignItems: "center",
           justifyContent: "center",
-          opacity: 1 - closingBeat * 0.08,
+          flexDirection: "column",
         }}
       >
         <Img
           src={staticFile("logo/atlas-logo-bianco.png")}
           style={{
-            width: 520,
+            width: 460,
             opacity: logoIn,
             transform: `scale(${logoScale})`,
           }}
         />
+
+        <div
+          style={{
+            marginTop: 40,
+            opacity: payoffIn,
+            transform: `translateY(${interpolate(payoffIn, [0, 1], [4, 0])}px)`,
+            fontFamily: FONT,
+            fontWeight: 500,
+            fontSize: 30,
+            color: "#ffffff",
+            letterSpacing: 0.2,
+          }}
+        >
+          {PAYOFF}
+        </div>
+
+        <div
+          style={{
+            marginTop: 28,
+            opacity: ctaIn,
+            transform: `translateY(${interpolate(ctaIn, [0, 1], [4, 0])}px)`,
+            fontFamily: FONT,
+            fontWeight: 400,
+            fontSize: 22,
+            color: AZZURRO,
+            letterSpacing: 0.3,
+          }}
+        >
+          {CTA}
+        </div>
       </AbsoluteFill>
 
       <div
@@ -52,9 +89,9 @@ export const SC09_Endcard: React.FC = () => {
           left: 0,
           right: 0,
           textAlign: "center",
-          opacity: lineIn,
-          transform: `translateY(${interpolate(lineIn, [0, 1], [4, 0])}px)`,
-          fontFamily: "Arial, Helvetica, sans-serif", // fallback §7.2 — V02 non specificato nelle linee guida
+          opacity: legalIn,
+          transform: `translateY(${interpolate(legalIn, [0, 1], [4, 0])}px)`,
+          fontFamily: FONT,
           fontSize: 15,
           letterSpacing: 0.2,
           color: "rgba(255,255,255,0.72)",
@@ -71,7 +108,7 @@ export const SC09_Endcard: React.FC = () => {
           width: 64,
           height: 2,
           backgroundColor: AZZURRO,
-          opacity: lineIn,
+          opacity: legalIn,
         }}
       />
     </AbsoluteFill>
