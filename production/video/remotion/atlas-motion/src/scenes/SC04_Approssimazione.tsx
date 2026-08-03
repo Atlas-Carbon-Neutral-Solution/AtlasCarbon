@@ -42,7 +42,7 @@ export const SC04_Approssimazione: React.FC = () => {
                 justifyContent: "center",
                 fontFamily: "monospace",
                 fontSize: 40,
-                color: "#7fd858",
+                color: "#e8a63c", // ambra neutro — evita qualunque verde diverso da V01
               }}
             >
               {digitAt(frame, i)}
