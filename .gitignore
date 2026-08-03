@@ -1,0 +1,7 @@
+
+# frame intermedi dei render Blender (rigenerabili da production/video/blender/*.py)
+production/video/blender/frames_*/
+production/video/blender/test0*/
+production/video/blender/frames/
+production/video/blender/*.log
+production/video/blender/__pycache__/
