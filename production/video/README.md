@@ -2,9 +2,22 @@
 
 ## Cosa è questo cut
 
-`remotion/atlas-motion/` contiene un **cut completo di 90 secondi**, motion-graphics, che segue
-scena per scena la struttura e il timing esatto di `script-video-pubblicitario-v1.0.md` (§4-§5),
-renderizzato con Remotion + un asset 3D reale renderizzato in Blender (SC05, movimento 2).
+`remotion/atlas-motion/` contiene un **cut completo di 90 secondi** che segue scena per scena la
+struttura e il timing esatto di `script-video-pubblicitario-v1.0.md` (§4-§5), assemblato con
+Remotion.
+
+**Quattro scene sono scene 3D reali renderizzate in Blender/EEVEE** (geometria, materiali PBR,
+luci ad area, profondita' di campo ottica), sorgenti in `blender/`:
+
+- **SC01** (`sc01_report.py`) — bilancio patinato su scrivania, luce radente, copertina
+  incernierata che si chiude di scatto sui grafici stampati.
+- **SC03** (`sc03_office.py`) — ufficio notturno illuminato dal solo monitor, questionario che
+  scorre (illeggibile per §2.2), stacco su scrivania con calendario e data cerchiata.
+- **SC04** (`sc04_plant.py`) — interno impianto: contatore con cifre 3D emissive che avanzano,
+  poi valvola che perde vapore sotto una torcia in movimento.
+- **SC05** (`orbit_scene.py`, movimento 2) — sfera opaca con anello orbitale.
+
+`render_all.sh` rigenera SC01/SC03/SC04 e li encoda negli asset Remotion.
 
 ## Cosa NON è
 
@@ -17,10 +30,12 @@ Questo ambiente non dispone di:
 - un motore TTS per la voce fuori campo;
 - una libreria musicale con licenza documentata (§6.3 la richiede esplicitamente).
 
-Per questo motivo, **tutte le scene che nello script richiedono riprese fotorealistiche
-(SC01-SC04, SC06, SC07) sono qui rappresentazioni astratte/motion-graphics** — coerenti con la
-palette e i divieti del brief (§2.3: nessun cliché ambientalista; NEG prompt: nessuna estetica
-sci-fi/hologram), ma non le riprese descritte nei PROMPT (EN) dello script.
+Le scene 3D in Blender sono **ricostruzioni**, non riprese: nessun drone reale, nessuna
+termocamera reale, nessuna piantagione reale, nessun attore. **SC06 e SC07 restano
+motion-graphics astratte** (termocamera e campo di bambu'), in attesa dello stesso trattamento 3D
+o delle riprese vere. Tutto e' coerente con la palette e i divieti del brief (§2.3: nessun cliche'
+ambientalista; NEG prompt: nessuna estetica sci-fi/hologram), ma non sostituisce i PROMPT (EN)
+dello script.
 
 Il video è **silenzioso**, con sottotitoli aperti (open caption) che riportano il testo VO di §6.2
 — l'unico modo per veicolare il contenuto parlato senza un motore di sintesi vocale.
@@ -40,7 +55,8 @@ Il video è **silenzioso**, con sottotitoli aperti (open caption) che riportano 
 Questo cut è una base di lavoro reale, non un deliverable pronto per l'advertising a pagamento.
 Restano bloccanti, per la checklist QA §10 dello script originale:
 
-- produzione delle riprese reali o generazione text-to-video autorizzata per SC01-SC04/SC06/SC07;
+- produzione delle riprese reali (o generazione text-to-video autorizzata) dove servono immagini
+  fotografiche: le scene 3D di SC01/SC03/SC04 sono ricostruzioni, SC06/SC07 sono ancora astratte;
 - voce fuori campo (talent o TTS con licenza) e musica su licenza documentata;
 - compilazione di V08-V12 se si vuole completare SC08;
 - revisione legale finale del testo (in particolare la correzione sul brevetto);
