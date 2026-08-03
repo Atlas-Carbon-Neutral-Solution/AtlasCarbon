@@ -1,4 +1,4 @@
-import { interpolate, useCurrentFrame } from "remotion";
+import { Img, interpolate, staticFile, useCurrentFrame } from "remotion";
 
 // Costanti condivise fra tutte le scene — vedi production/brand/README.md per la provenienza.
 export const BG = "#14171a"; // base fredda industriale (§7.1) — non è un colore di marchio
@@ -39,6 +39,34 @@ export const Vignette: React.FC<{ strength?: number }> = ({ strength = 0.55 }) =
     }}
   />
 );
+
+// Bug/watermark del logo ufficiale — presente per tutta la durata del video (non solo
+// in endcard), come richiesto da Tobia Zampieri: presenza di marchio insufficiente se
+// confinata agli ultimi 8s su 90. Logo bianco non alterato (solo scala uniforme via
+// width), angolo in alto a destra, margine di sicurezza, opacità ridotta per non
+// competere con l'endcard dove il marchio torna a piena dimensione.
+export const LogoWatermark: React.FC<{ totalFrames: number }> = ({ totalFrames }) => {
+  const frame = useCurrentFrame();
+  const fadeIn = easeInOut(frame, 8, 20);
+  const endcardStart = totalFrames - 200; // SC09 già mostra il logo a piena dimensione
+  const fadeOutForEndcard = easeInOut(frame, endcardStart - 15, 15);
+  const opacity = fadeIn * (1 - fadeOutForEndcard) * 0.82;
+
+  if (opacity <= 0.001) return null;
+
+  return (
+    <Img
+      src={staticFile("logo/atlas-logo-bianco.png")}
+      style={{
+        position: "absolute",
+        top: 44,
+        right: 52,
+        width: 148,
+        opacity,
+      }}
+    />
+  );
+};
 
 // Wrapper standard per ogni scena: sfondo + contenuto + grana/vignetta uniformi.
 export const SceneShell: React.FC<{ bg: string; children: React.ReactNode }> = ({ bg, children }) => (

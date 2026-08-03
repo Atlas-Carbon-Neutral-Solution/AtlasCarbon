@@ -1,4 +1,5 @@
-import { Composition, Series } from "remotion";
+import { AbsoluteFill, Composition, Series } from "remotion";
+import { LogoWatermark } from "./shared";
 import { SC01_Apertura } from "./scenes/SC01_Apertura";
 import { SC02_StaccoReale } from "./scenes/SC02_StaccoReale";
 import { SC03_Pressione } from "./scenes/SC03_Pressione";
@@ -26,41 +27,44 @@ const FPS = 25;
 const WIDTH = 1920;
 const HEIGHT = 1080;
 
+const TOTAL_FRAMES = Object.values(DURATIONS).reduce((a, b) => a + b, 0);
+
 export const AtlasMaster90: React.FC = () => {
   return (
-    <Series>
-      <Series.Sequence durationInFrames={DURATIONS.SC01}>
-        <SC01_Apertura />
-      </Series.Sequence>
-      <Series.Sequence durationInFrames={DURATIONS.SC02}>
-        <SC02_StaccoReale />
-      </Series.Sequence>
-      <Series.Sequence durationInFrames={DURATIONS.SC03}>
-        <SC03_Pressione />
-      </Series.Sequence>
-      <Series.Sequence durationInFrames={DURATIONS.SC04}>
-        <SC04_Approssimazione />
-      </Series.Sequence>
-      <Series.Sequence durationInFrames={DURATIONS.SC05}>
-        <SC05_IngressoAtlas />
-      </Series.Sequence>
-      <Series.Sequence durationInFrames={DURATIONS.SC06}>
-        <SC06_Efficientamento />
-      </Series.Sequence>
-      <Series.Sequence durationInFrames={DURATIONS.SC07}>
-        <SC07_Decarbonizzazione />
-      </Series.Sequence>
-      <Series.Sequence durationInFrames={DURATIONS.SC08}>
-        <SC08_Proof />
-      </Series.Sequence>
-      <Series.Sequence durationInFrames={DURATIONS.SC09}>
-        <SC09_Endcard />
-      </Series.Sequence>
-    </Series>
+    <AbsoluteFill>
+      <Series>
+        <Series.Sequence durationInFrames={DURATIONS.SC01}>
+          <SC01_Apertura />
+        </Series.Sequence>
+        <Series.Sequence durationInFrames={DURATIONS.SC02}>
+          <SC02_StaccoReale />
+        </Series.Sequence>
+        <Series.Sequence durationInFrames={DURATIONS.SC03}>
+          <SC03_Pressione />
+        </Series.Sequence>
+        <Series.Sequence durationInFrames={DURATIONS.SC04}>
+          <SC04_Approssimazione />
+        </Series.Sequence>
+        <Series.Sequence durationInFrames={DURATIONS.SC05}>
+          <SC05_IngressoAtlas />
+        </Series.Sequence>
+        <Series.Sequence durationInFrames={DURATIONS.SC06}>
+          <SC06_Efficientamento />
+        </Series.Sequence>
+        <Series.Sequence durationInFrames={DURATIONS.SC07}>
+          <SC07_Decarbonizzazione />
+        </Series.Sequence>
+        <Series.Sequence durationInFrames={DURATIONS.SC08}>
+          <SC08_Proof />
+        </Series.Sequence>
+        <Series.Sequence durationInFrames={DURATIONS.SC09}>
+          <SC09_Endcard />
+        </Series.Sequence>
+      </Series>
+      <LogoWatermark totalFrames={TOTAL_FRAMES} />
+    </AbsoluteFill>
   );
 };
-
-const TOTAL_FRAMES = Object.values(DURATIONS).reduce((a, b) => a + b, 0);
 
 export const MyComposition = () => {
   return (

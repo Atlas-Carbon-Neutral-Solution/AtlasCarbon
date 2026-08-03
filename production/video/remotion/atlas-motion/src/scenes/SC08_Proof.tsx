@@ -14,9 +14,11 @@ const LINES = [
 ];
 
 const STEP_FRAMES = 42;
+const CTA_TEASER_AT = 150; // ~1.7s prima della fine — richiamo CTA, non solo in endcard
 
 export const SC08_Proof: React.FC = () => {
   const frame = useCurrentFrame();
+  const teaserIn = easeInOut(frame, CTA_TEASER_AT, 16);
 
   return (
     <SceneShell bg="#12151a">
@@ -62,6 +64,25 @@ export const SC08_Proof: React.FC = () => {
             );
           })}
         </div>
+      </div>
+
+      {/* richiamo CTA — piccolo, angolo inferiore destro, prepara l'endcard */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 60,
+          right: 70,
+          opacity: teaserIn,
+          transform: `translateY(${(1 - teaserIn) * 10}px)`,
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          padding: "10px 22px",
+          borderRadius: 999,
+          border: `1.5px solid ${AZZURRO}`,
+        }}
+      >
+        <span style={{ fontFamily: FONT, fontWeight: 600, fontSize: 18, color: AZZURRO }}>www.atlascarbonneutral.com</span>
       </div>
     </SceneShell>
   );

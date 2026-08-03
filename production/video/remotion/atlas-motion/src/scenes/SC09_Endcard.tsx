@@ -6,6 +6,9 @@ import { AZZURRO, FONT, SceneShell, easeInOut } from "../shared";
 // Variabili usate, tutte confermate: V01 (palette), V02 (font: fallback), V03
 // (logo bianco ufficiale, invariato), V04 (payoff, opzione A), V05 (CTA), e la
 // ragione sociale legale (V15, dato verificato).
+//
+// CTA ridisegnata come vero bottone (pillola azzurra, freccia, leggero pulse) su
+// richiesta di Tobia Zampieri: il solo testo blu non si leggeva come un'azione.
 
 const PAYOFF = "Il dato prima della promessa."; // V04
 const CTA = "www.atlascarbonneutral.com"; // V05
@@ -18,9 +21,12 @@ export const SC09_Endcard: React.FC = () => {
   const logoIn = easeInOut(frame, 0, 14);
   const logoScale = interpolateScale(logoIn, 0.9, 1);
   const payoffIn = easeInOut(frame, 18, 14);
-  const ctaIn = easeInOut(frame, 36, 14);
-  const legalIn = easeInOut(frame, 54, 14);
+  const ctaIn = easeInOut(frame, 38, 16);
+  const legalIn = easeInOut(frame, 58, 14);
   const closingBeat = easeInOut(frame, 170, 10);
+
+  // leggero "respiro" del bottone dopo l'ingresso, per farlo percepire cliccabile
+  const pulse = ctaIn >= 1 ? 1 + Math.sin((frame - 54) / 14) * 0.018 : 1;
 
   return (
     <SceneShell bg="#14171a">
@@ -52,19 +58,23 @@ export const SC09_Endcard: React.FC = () => {
             {PAYOFF}
           </div>
 
+          {/* CTA — bottone pillola, non solo testo */}
           <div
             style={{
-              marginTop: 30,
+              marginTop: 44,
               opacity: ctaIn,
-              transform: `translateY(${(1 - ctaIn) * 8}px)`,
-              fontFamily: FONT,
-              fontWeight: 500,
-              fontSize: 28,
-              color: AZZURRO,
-              letterSpacing: 0.4,
+              transform: `translateY(${(1 - ctaIn) * 10}px) scale(${pulse})`,
+              display: "flex",
+              alignItems: "center",
+              gap: 14,
+              padding: "18px 36px",
+              borderRadius: 999,
+              backgroundColor: AZZURRO,
+              boxShadow: `0 0 ${30 + (pulse - 1) * 800}px rgba(83,164,219,0.45)`,
             }}
           >
-            {CTA}
+            <span style={{ fontFamily: FONT, fontWeight: 700, fontSize: 26, color: "#0d1a24", letterSpacing: 0.3 }}>{CTA}</span>
+            <span style={{ fontFamily: FONT, fontWeight: 700, fontSize: 26, color: "#0d1a24" }}>→</span>
           </div>
         </div>
 
