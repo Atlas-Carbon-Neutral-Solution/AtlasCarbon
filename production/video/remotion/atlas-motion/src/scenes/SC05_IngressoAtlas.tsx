@@ -1,103 +1,125 @@
-import { AbsoluteFill, OffthreadVideo, staticFile, useCurrentFrame } from "remotion";
-import { AZZURRO, BG, FONT, OpenCaption, easeInOut } from "../shared";
+import { OffthreadVideo, staticFile, useCurrentFrame } from "remotion";
+import { AZZURRO, FONT, OpenCaption, SceneShell, easeInOut } from "../shared";
 
 // SC05 — Ingresso Atlas, perno non tagliabile (§5, TC 00:32-00:48, 16s @ 25fps = 400 frame)
 //
-// Movimento 1 (0-125, 5s): sensore astratto — nessuna camera reale disponibile.
-// Movimento 2 (125-275, 6s): rendering 3D reale (Blender, EEVEE) — sfera opaca +
-//   anello orbitale, deliberatamente non un "globo verde" (cliche' bandito §2.3)
-//   e non un'estetica sci-fi/hologram (bandita dal NEG prompt originale).
-// Movimento 3 (275-400, 5s): convergenza vettoriale 2D + OST sequenziale.
+// Movimento 1 (0-125, 5s): sensore astratto, ora con piu' profondità/luce.
+// Movimento 2 (125-275, 6s): rendering 3D reale (Blender, EEVEE).
+// Movimento 3 (275-400, 5s): convergenza vettoriale 2D + OST sequenziale, tipografia
+//   molto piu' grande e con un anello sigillo piu' definito.
 
 const VO =
-  "Atlas misura. Sensori in campo. Dati satellitari. Modelli calibrati sull'impianto reale.\nE un registro notarizzato che nessuno può riscrivere a posteriori: nemmeno noi.";
+  "Atlas misura. Sensori in campo. Dati satellitari.\nModelli calibrati sull'impianto reale. E un registro\nnotarizzato che nessuno può riscrivere: nemmeno noi.";
 
 const MOV1_END = 125;
 const MOV2_END = 275;
 
 export const SC05_IngressoAtlas: React.FC = () => {
   const frame = useCurrentFrame();
-  const captionIn = easeInOut(frame, 10, 9);
+  const captionIn = easeInOut(frame, 10, 10);
 
   return (
-    <AbsoluteFill style={{ backgroundColor: BG }}>
+    <SceneShell bg="#14171a">
       {frame < MOV1_END && <SensorMacro frame={frame} />}
       {frame >= MOV1_END && frame < MOV2_END && <OrbitShot frame={frame - MOV1_END} />}
       {frame >= MOV2_END && <DataConvergence frame={frame - MOV2_END} />}
 
       <OpenCaption text={VO} opacity={captionIn} />
-    </AbsoluteFill>
+    </SceneShell>
   );
 };
 
 const SensorMacro: React.FC<{ frame: number }> = ({ frame }) => {
   const pulse = 0.5 + 0.5 * Math.sin(frame / 10);
+  const drift = frame * 0.15;
   return (
-    <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
-      <div style={{ position: "relative", width: 300, height: 180 }}>
-        <div style={{ position: "absolute", top: 70, left: 0, right: 0, height: 40, backgroundColor: "#3a3f45", borderRadius: 6 }} />
-        <div style={{ position: "absolute", top: 30, left: 90, width: 120, height: 120, backgroundColor: "#22262a", borderRadius: 10, border: "1px solid #454a50" }} />
+    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ position: "relative", width: 420, height: 260, transform: `translateX(${drift}px)` }}>
         <div
           style={{
             position: "absolute",
-            top: 78,
-            left: 140,
-            width: 20,
-            height: 20,
+            top: 108,
+            left: -40,
+            right: -40,
+            height: 54,
+            background: "linear-gradient(180deg, #4a5058, #2b3036)",
+            borderRadius: 8,
+            boxShadow: "0 30px 60px rgba(0,0,0,0.55)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: 50,
+            left: 130,
+            width: 160,
+            height: 160,
+            backgroundColor: "#20242a",
+            borderRadius: 14,
+            border: "1px solid #4a5058",
+            boxShadow: "0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: 108,
+            left: 190,
+            width: 40,
+            height: 40,
             borderRadius: "50%",
             backgroundColor: AZZURRO,
-            opacity: 0.4 + pulse * 0.6,
-            boxShadow: `0 0 ${pulse * 14}px rgba(83,164,219,${pulse * 0.5})`,
+            opacity: 0.5 + pulse * 0.5,
+            boxShadow: `0 0 ${18 + pulse * 30}px rgba(83,164,219,${0.35 + pulse * 0.45})`,
           }}
         />
       </div>
-    </AbsoluteFill>
+    </div>
   );
 };
 
-const OrbitShot: React.FC<{ frame: number }> = ({ frame }) => {
-  return (
-    <AbsoluteFill>
-      <OffthreadVideo src={staticFile("video/sc05-orbit.mp4")} startFrom={frame} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-    </AbsoluteFill>
-  );
-};
+const OrbitShot: React.FC<{ frame: number }> = ({ frame }) => (
+  <div style={{ position: "absolute", inset: 0 }}>
+    <OffthreadVideo src={staticFile("video/sc05-orbit.mp4")} startFrom={frame} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+  </div>
+);
 
 const DataConvergence: React.FC<{ frame: number }> = ({ frame }) => {
-  const sealIn = easeInOut(frame, 60, 15);
+  const sealIn = easeInOut(frame, 60, 16);
   const labels = [
     { text: "MISURA", sub: "in campo", at: 5 },
-    { text: "VERIFICA", sub: "da satellite", at: 30 },
-    { text: "NOTARIZZAZIONE", sub: "immutabile", at: 55 },
+    { text: "VERIFICA", sub: "da satellite", at: 32 },
+    { text: "NOTARIZZAZIONE", sub: "immutabile", at: 60 },
   ];
 
   return (
-    <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
+    <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
       <div
         style={{
-          width: 90,
-          height: 90,
-          borderRadius: 6,
-          border: `2px solid ${AZZURRO}`,
-          opacity: 0.3 + sealIn * 0.7,
-          transform: `scale(${1 + sealIn * 0.1}) rotate(${sealIn * 45}deg)`,
-          marginBottom: 56,
+          width: 120,
+          height: 120,
+          borderRadius: 10,
+          border: `3px solid ${AZZURRO}`,
+          opacity: 0.35 + sealIn * 0.65,
+          boxShadow: `0 0 ${sealIn * 50}px rgba(83,164,219,${sealIn * 0.35})`,
+          transform: `scale(${1 + sealIn * 0.12}) rotate(${sealIn * 45}deg)`,
+          marginBottom: 68,
         }}
       />
-      <div style={{ display: "flex", gap: 26, alignItems: "center" }}>
+      <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
         {labels.map((l, i) => {
-          const inAnim = easeInOut(frame, l.at, 12);
+          const inAnim = easeInOut(frame, l.at, 14);
           return (
-            <div key={l.text} style={{ display: "flex", alignItems: "center", gap: 26 }}>
-              {i > 0 && <div style={{ opacity: inAnim, color: AZZURRO, fontSize: 22 }}>→</div>}
-              <div style={{ textAlign: "center", opacity: inAnim, transform: `translateY(${(1 - inAnim) * 6}px)` }}>
-                <div style={{ fontFamily: FONT, fontWeight: 600, fontSize: 24, color: "#fff", letterSpacing: 1 }}>{l.text}</div>
-                <div style={{ fontFamily: FONT, fontWeight: 400, fontSize: 15, color: "rgba(255,255,255,0.6)" }}>{l.sub}</div>
+            <div key={l.text} style={{ display: "flex", alignItems: "center", gap: 32 }}>
+              {i > 0 && <div style={{ opacity: inAnim, color: AZZURRO, fontSize: 28 }}>→</div>}
+              <div style={{ textAlign: "center", opacity: inAnim, transform: `translateY(${(1 - inAnim) * 8}px)` }}>
+                <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 32, color: "#fff", letterSpacing: 1.2 }}>{l.text}</div>
+                <div style={{ fontFamily: FONT, fontWeight: 400, fontSize: 18, color: "rgba(255,255,255,0.62)", marginTop: 4 }}>{l.sub}</div>
               </div>
             </div>
           );
         })}
       </div>
-    </AbsoluteFill>
+    </div>
   );
 };

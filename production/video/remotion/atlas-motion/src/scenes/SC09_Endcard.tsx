@@ -1,116 +1,106 @@
-import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
+import { Img, staticFile, useCurrentFrame } from "remotion";
+import { AZZURRO, FONT, SceneShell, easeInOut } from "../shared";
 
 // SC09 — Endcard e CTA (script §5, TC 01:22-01:30, 8s @ 25fps = 200 frame)
 //
-// Variabili usate, tutte confermate: V01 (palette), V02 (font: fallback
-// sans-serif geometrico, nessun font specificato nelle linee guida), V03
-// (logo bianco ufficiale), V04 (payoff, opzione A raccomandata dal
-// documento), V05 (CTA), e la ragione sociale legale (V15, dato
-// verificato: P.IVA e sede legale).
+// Variabili usate, tutte confermate: V01 (palette), V02 (font: fallback), V03
+// (logo bianco ufficiale, invariato), V04 (payoff, opzione A), V05 (CTA), e la
+// ragione sociale legale (V15, dato verificato).
 
-const BG = "#14171a"; // base fredda industriale (§7.1) — non è uno dei due colori di marchio
-const AZZURRO = "#53a4db"; // V01
-const PAYOFF = "Il dato prima della promessa."; // V04 — opzione A, §8
+const PAYOFF = "Il dato prima della promessa."; // V04
 const CTA = "www.atlascarbonneutral.com"; // V05
 const RAGIONE_SOCIALE =
   "Atlas Carbon Neutral Solutions S.r.l. Società Benefit — P.IVA 14003650968 — Via Giuseppe Pecchio 1, 20131 Milano";
 
-const FONT = "Arial, Helvetica, sans-serif"; // V02 fallback §7.2
-
-const easeInOut = (frame: number, from: number, durationInFrames: number) =>
-  interpolate(frame, [from, from + durationInFrames], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-
 export const SC09_Endcard: React.FC = () => {
   const frame = useCurrentFrame();
 
-  const logoIn = easeInOut(frame, 0, 9);
-  const logoScale = interpolate(logoIn, [0, 1], [0.96, 1]);
-  const payoffIn = easeInOut(frame, 15, 9);
-  const ctaIn = easeInOut(frame, 30, 9);
-  const legalIn = easeInOut(frame, 45, 9);
-  const closingBeat = easeInOut(frame, 170, 9);
+  const logoIn = easeInOut(frame, 0, 14);
+  const logoScale = interpolateScale(logoIn, 0.9, 1);
+  const payoffIn = easeInOut(frame, 18, 14);
+  const ctaIn = easeInOut(frame, 36, 14);
+  const legalIn = easeInOut(frame, 54, 14);
+  const closingBeat = easeInOut(frame, 170, 10);
 
   return (
-    <AbsoluteFill style={{ backgroundColor: BG, opacity: 1 - closingBeat * 0.08 }}>
-      <AbsoluteFill
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-        }}
-      >
-        <Img
-          src={staticFile("logo/atlas-logo-bianco.png")}
+    <SceneShell bg="#14171a">
+      <div style={{ position: "absolute", inset: 0, opacity: 1 - closingBeat * 0.1 }}>
+        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+          <Img
+            src={staticFile("logo/atlas-logo-bianco.png")}
+            style={{
+              width: 560,
+              opacity: logoIn,
+              filter: `blur(${(1 - logoIn) * 10}px)`,
+              transform: `scale(${logoScale})`,
+            }}
+          />
+
+          <div
+            style={{
+              marginTop: 52,
+              opacity: payoffIn,
+              filter: `blur(${(1 - payoffIn) * 6}px)`,
+              transform: `translateY(${(1 - payoffIn) * 10}px)`,
+              fontFamily: FONT,
+              fontWeight: 600,
+              fontSize: 42,
+              color: "#ffffff",
+              letterSpacing: 0.3,
+            }}
+          >
+            {PAYOFF}
+          </div>
+
+          <div
+            style={{
+              marginTop: 30,
+              opacity: ctaIn,
+              transform: `translateY(${(1 - ctaIn) * 8}px)`,
+              fontFamily: FONT,
+              fontWeight: 500,
+              fontSize: 28,
+              color: AZZURRO,
+              letterSpacing: 0.4,
+            }}
+          >
+            {CTA}
+          </div>
+        </div>
+
+        <div
           style={{
-            width: 460,
-            opacity: logoIn,
-            transform: `scale(${logoScale})`,
+            position: "absolute",
+            bottom: 52,
+            left: 0,
+            right: 0,
+            textAlign: "center",
+            opacity: legalIn,
+            fontFamily: FONT,
+            fontSize: 17,
+            letterSpacing: 0.2,
+            color: "rgba(255,255,255,0.68)",
+          }}
+        >
+          {RAGIONE_SOCIALE}
+        </div>
+
+        <div
+          style={{
+            position: "absolute",
+            bottom: 52,
+            left: 52,
+            width: 72,
+            height: 3,
+            backgroundColor: AZZURRO,
+            opacity: legalIn,
           }}
         />
-
-        <div
-          style={{
-            marginTop: 40,
-            opacity: payoffIn,
-            transform: `translateY(${interpolate(payoffIn, [0, 1], [4, 0])}px)`,
-            fontFamily: FONT,
-            fontWeight: 500,
-            fontSize: 30,
-            color: "#ffffff",
-            letterSpacing: 0.2,
-          }}
-        >
-          {PAYOFF}
-        </div>
-
-        <div
-          style={{
-            marginTop: 28,
-            opacity: ctaIn,
-            transform: `translateY(${interpolate(ctaIn, [0, 1], [4, 0])}px)`,
-            fontFamily: FONT,
-            fontWeight: 400,
-            fontSize: 22,
-            color: AZZURRO,
-            letterSpacing: 0.3,
-          }}
-        >
-          {CTA}
-        </div>
-      </AbsoluteFill>
-
-      <div
-        style={{
-          position: "absolute",
-          bottom: 48,
-          left: 0,
-          right: 0,
-          textAlign: "center",
-          opacity: legalIn,
-          transform: `translateY(${interpolate(legalIn, [0, 1], [4, 0])}px)`,
-          fontFamily: FONT,
-          fontSize: 15,
-          letterSpacing: 0.2,
-          color: "rgba(255,255,255,0.72)",
-        }}
-      >
-        {RAGIONE_SOCIALE}
       </div>
-
-      <div
-        style={{
-          position: "absolute",
-          bottom: 48,
-          left: 48,
-          width: 64,
-          height: 2,
-          backgroundColor: AZZURRO,
-          opacity: legalIn,
-        }}
-      />
-    </AbsoluteFill>
+    </SceneShell>
   );
 };
+
+function interpolateScale(t: number, from: number, to: number) {
+  return from + (to - from) * t;
+}
