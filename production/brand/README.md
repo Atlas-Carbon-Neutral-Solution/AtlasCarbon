@@ -32,7 +32,27 @@ nessuna inclinazione, nessuna modifica di colore, nessuna separazione degli elem
 nessuna ombra, nessun contorno, nessun cambio di proporzione fra le parti, e mai su immagini che
 compromettano la leggibilità.
 
+## V04 — Payoff (CONFERMATO da Tobia Zampieri, 03/08/2026)
+
+Opzione A di §8: **"Il dato prima della promessa."** — la stessa raccomandazione operativa del documento originale.
+
+## V05 — CTA (CONFERMATA da Tobia Zampieri, 03/08/2026)
+
+`www.atlascarbonneutral.com`
+
+## V07 — Brevetto (CONFERMATO, con CORREZIONE rispetto al testo originale dello script)
+
+Lo script originale (SC08) chiedeva di esporre "Brevetto AgroCarbonSense n. ____". Verificato che
+il brevetto risultante depositato (UIBM n. 102025000029407) copre **B.R.A.I.N.**, non
+AgroCarbonSense/CarbonSense. Citarlo come "brevetto AgroCarbonSense" sarebbe un claim falso.
+Reso in video come: "Brevetto depositato n. 102025000029407 — B.R.A.I.N. Engine" (mai "brevetto"
+senza "depositato", poiché non ancora concesso).
+
 ## Variabili ancora aperte
 
-- V04 (payoff), V05 (CTA) — non presenti nelle linee guida, restano da compilare.
-- V07–V12 (SC08) — soggetti anche a verifica di conformità aziendale, non derivabili da questo documento.
+- V08 (ESA BIC Padova), V09 (RIR AIR), V10 (Premio Fondazione Italia USA), V11 (standard citabili),
+  V12 (metrica di trazione) — non confermate. Omesse dal render di SC08, non inventate (§0.1).
+- V13 (location reali per riprese), V14 (voce speaker) — non applicabili al cut motion-graphics
+  attuale: nessuna ripresa reale né voce sintetizzata è stata prodotta in questo ambiente (nessuna
+  camera, talent, TTS o libreria musicale su licenza disponibili). Vedi nota in
+  `production/video/README.md`.

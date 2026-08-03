@@ -1,26 +1,80 @@
-import { Composition } from "remotion";
+import { Composition, Series } from "remotion";
+import { SC01_Apertura } from "./scenes/SC01_Apertura";
+import { SC02_StaccoReale } from "./scenes/SC02_StaccoReale";
+import { SC03_Pressione } from "./scenes/SC03_Pressione";
+import { SC04_Approssimazione } from "./scenes/SC04_Approssimazione";
+import { SC05_IngressoAtlas } from "./scenes/SC05_IngressoAtlas";
+import { SC06_Efficientamento } from "./scenes/SC06_Efficientamento";
+import { SC07_Decarbonizzazione } from "./scenes/SC07_Decarbonizzazione";
 import { SC08_Proof } from "./scenes/SC08_Proof";
 import { SC09_Endcard } from "./scenes/SC09_Endcard";
+
+// Durate in frame @ 25fps, dalle TC del master script §5 (90s totali = 2250 frame)
+const DURATIONS = {
+  SC01: 175, // 00:00-00:07
+  SC02: 175, // 00:07-00:14
+  SC03: 250, // 00:14-00:24
+  SC04: 200, // 00:24-00:32
+  SC05: 400, // 00:32-00:48
+  SC06: 300, // 00:48-01:00
+  SC07: 350, // 01:00-01:14
+  SC08: 200, // 01:14-01:22
+  SC09: 200, // 01:22-01:30
+};
+
+const FPS = 25;
+const WIDTH = 1920;
+const HEIGHT = 1080;
+
+export const AtlasMaster90: React.FC = () => {
+  return (
+    <Series>
+      <Series.Sequence durationInFrames={DURATIONS.SC01}>
+        <SC01_Apertura />
+      </Series.Sequence>
+      <Series.Sequence durationInFrames={DURATIONS.SC02}>
+        <SC02_StaccoReale />
+      </Series.Sequence>
+      <Series.Sequence durationInFrames={DURATIONS.SC03}>
+        <SC03_Pressione />
+      </Series.Sequence>
+      <Series.Sequence durationInFrames={DURATIONS.SC04}>
+        <SC04_Approssimazione />
+      </Series.Sequence>
+      <Series.Sequence durationInFrames={DURATIONS.SC05}>
+        <SC05_IngressoAtlas />
+      </Series.Sequence>
+      <Series.Sequence durationInFrames={DURATIONS.SC06}>
+        <SC06_Efficientamento />
+      </Series.Sequence>
+      <Series.Sequence durationInFrames={DURATIONS.SC07}>
+        <SC07_Decarbonizzazione />
+      </Series.Sequence>
+      <Series.Sequence durationInFrames={DURATIONS.SC08}>
+        <SC08_Proof />
+      </Series.Sequence>
+      <Series.Sequence durationInFrames={DURATIONS.SC09}>
+        <SC09_Endcard />
+      </Series.Sequence>
+    </Series>
+  );
+};
+
+const TOTAL_FRAMES = Object.values(DURATIONS).reduce((a, b) => a + b, 0);
 
 export const MyComposition = () => {
   return (
     <>
-      <Composition
-        id="SC08-Proof"
-        component={SC08_Proof}
-        durationInFrames={200}
-        fps={25}
-        width={1920}
-        height={1080}
-      />
-      <Composition
-        id="SC09-Endcard"
-        component={SC09_Endcard}
-        durationInFrames={200}
-        fps={25}
-        width={1920}
-        height={1080}
-      />
+      <Composition id="AtlasMaster90" component={AtlasMaster90} durationInFrames={TOTAL_FRAMES} fps={FPS} width={WIDTH} height={HEIGHT} />
+      <Composition id="SC01-Apertura" component={SC01_Apertura} durationInFrames={DURATIONS.SC01} fps={FPS} width={WIDTH} height={HEIGHT} />
+      <Composition id="SC02-StaccoReale" component={SC02_StaccoReale} durationInFrames={DURATIONS.SC02} fps={FPS} width={WIDTH} height={HEIGHT} />
+      <Composition id="SC03-Pressione" component={SC03_Pressione} durationInFrames={DURATIONS.SC03} fps={FPS} width={WIDTH} height={HEIGHT} />
+      <Composition id="SC04-Approssimazione" component={SC04_Approssimazione} durationInFrames={DURATIONS.SC04} fps={FPS} width={WIDTH} height={HEIGHT} />
+      <Composition id="SC05-IngressoAtlas" component={SC05_IngressoAtlas} durationInFrames={DURATIONS.SC05} fps={FPS} width={WIDTH} height={HEIGHT} />
+      <Composition id="SC06-Efficientamento" component={SC06_Efficientamento} durationInFrames={DURATIONS.SC06} fps={FPS} width={WIDTH} height={HEIGHT} />
+      <Composition id="SC07-Decarbonizzazione" component={SC07_Decarbonizzazione} durationInFrames={DURATIONS.SC07} fps={FPS} width={WIDTH} height={HEIGHT} />
+      <Composition id="SC08-Proof" component={SC08_Proof} durationInFrames={DURATIONS.SC08} fps={FPS} width={WIDTH} height={HEIGHT} />
+      <Composition id="SC09-Endcard" component={SC09_Endcard} durationInFrames={DURATIONS.SC09} fps={FPS} width={WIDTH} height={HEIGHT} />
     </>
   );
 };
