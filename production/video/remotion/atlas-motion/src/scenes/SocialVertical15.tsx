@@ -9,7 +9,8 @@ import { AZZURRO, CineVideo, ColdShadows, FONT, FilmGrain, Vignette, easeInOut }
 // ricomposta per il verticale.
 //
 // Nessun testo nuovo: le righe sono sottoinsiemi verbatim del VO §6.2 già
-// approvato, e le variabili sono le sole confermate (V03 logo, V04 payoff,
+// approvato — parole dello script, nell'ordine dello script, solo accorciate per
+// il formato — e le variabili sono le sole confermate (V03 logo, V04 payoff,
 // V05 CTA, ragione sociale).
 
 const PAYOFF = "Il dato prima della promessa."; // V04
@@ -129,7 +130,7 @@ export const SocialVertical15: React.FC = () => (
       </Series.Sequence>
       <Series.Sequence durationInFrames={BLOCK.PROVA}>
         <CineVideo src={staticFile("video/sc05c-ledger.mp4")} halation={0.24} />
-        <VerticalCaption text="Un registro notarizzato che nessuno può riscrivere." />
+        <VerticalCaption text="Un registro notarizzato che nessuno può riscrivere a posteriori." />
       </Series.Sequence>
       <Series.Sequence durationInFrames={BLOCK.ENDCARD}>
         <Endcard />

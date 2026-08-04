@@ -1,5 +1,6 @@
-import { staticFile, useCurrentFrame } from "remotion";
-import { CineVideo, OpenCaption, SceneShell, easeInOut } from "../shared";
+import { staticFile } from "remotion";
+import { CineVideo, SceneShell, TimedCaption } from "../shared";
+import { VO } from "../vo";
 
 // SC07 — Decarbonizzazione e assorbimento (§5, TC 01:00-01:14, 14s @ 25fps = 350 frame)
 //
@@ -9,14 +10,12 @@ import { CineVideo, OpenCaption, SceneShell, easeInOut } from "../shared";
 // culmi, macro sulla fascetta dendrometrica, gru che scopre le file.
 // Sorgente: production/video/blender/sc07_bamboo.py
 
-const VO = "Ciò che non puoi eliminare, lo assorbi.\nMa solo se lo conti davvero: ettaro per ettaro,\npianta per pianta, misura per misura.";
 
 export const SC07_Decarbonizzazione: React.FC = () => {
-  const frame = useCurrentFrame();
   return (
     <SceneShell bg="#0a0f0a">
       <CineVideo src={staticFile("video/sc07-bamboo.mp4")} halation={0.19} saturate={0.86} />
-      <OpenCaption text={VO} opacity={easeInOut(frame, 14, 12)} />
+      <TimedCaption cues={VO.SC07} />
     </SceneShell>
   );
 };

@@ -1,5 +1,6 @@
-import { staticFile, useCurrentFrame } from "remotion";
-import { CineVideo, OpenCaption, SceneShell, easeInOut } from "../shared";
+import { staticFile } from "remotion";
+import { CineVideo, SceneShell, TimedCaption } from "../shared";
+import { VO } from "../vo";
 
 // SC06 — Efficientamento energetico (§5, TC 00:48-01:00, 12s @ 25fps = 300 frame)
 //
@@ -12,14 +13,12 @@ import { CineVideo, OpenCaption, SceneShell, easeInOut } from "../shared";
 // Falsi colori IR ambra/ciano: fuori dalla palette di marchio, che resta
 // riservata agli elementi grafici (V01).
 
-const VO = "Dove misuri, trovi lo spreco. Dove trovi lo spreco,\ntagli il costo prima ancora dell'emissione.\nSi ripaga da sola.";
 
 export const SC06_Efficientamento: React.FC = () => {
-  const frame = useCurrentFrame();
   return (
     <SceneShell bg="#05070a">
       <CineVideo src={staticFile("video/sc06-thermal.mp4")} halation={0.26} contrast={1.16} saturate={0.98} />
-      <OpenCaption text={VO} opacity={easeInOut(frame, 14, 12)} />
+      <TimedCaption cues={VO.SC06} />
     </SceneShell>
   );
 };

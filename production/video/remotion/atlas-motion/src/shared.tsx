@@ -176,12 +176,14 @@ export const SceneShell: React.FC<{ bg: string; children: React.ReactNode }> = (
 // pronunciato e l'inquadratura non resta mai tipograficamente ferma. Filetto
 // azzurro che si allunga come "battuta" d'ingresso. Allineamento a sinistra,
 // dentro l'area sicura anamorfica; §7.3 (max 2 righe) resta rispettato riga per riga.
-export const OpenCaption: React.FC<{ text: string; opacity?: number; align?: "left" | "center" }> = ({
-  text,
-  opacity = 1,
-  align = "left",
-}) => {
-  const frame = useCurrentFrame();
+export const OpenCaption: React.FC<{
+  text: string;
+  opacity?: number;
+  align?: "left" | "center";
+  /** frame da cui far partire la rivelazione (inizio della battuta) */
+  startFrame?: number;
+}> = ({ text, opacity = 1, align = "left", startFrame = 0 }) => {
+  const frame = useCurrentFrame() - startFrame;
   if (!text) return null;
   const lines = text.split("\n");
   const WORD_STEP = 2.6;
@@ -247,5 +249,30 @@ export const OpenCaption: React.FC<{ text: string; opacity?: number; align?: "le
         </div>
       ))}
     </div>
+  );
+};
+
+// Didascalie temporizzate: mostra la battuta attiva secondo la tabella in vo.ts.
+//
+// Sostituisce il blocco unico per scena. Con un solo blocco il testo restava
+// immobile per tutta la scena (sedici secondi in SC05) mentre l'immagine
+// cambiava inquadratura: la tipografia ora entra ed esce sugli stacchi.
+export const TimedCaption: React.FC<{
+  cues: { text: string; from: number; to: number }[];
+  align?: "left" | "center";
+}> = ({ cues, align = "left" }) => {
+  const frame = useCurrentFrame();
+  const FADE = 8;
+  const active = cues.find((c) => frame >= c.from && frame < c.to);
+  if (!active) return null;
+  const inOp = easeInOut(frame, active.from, FADE);
+  const outOp = 1 - easeInOut(frame, active.to - FADE, FADE);
+  return (
+    <OpenCaption
+      text={active.text}
+      opacity={inOp * outOp}
+      align={align}
+      startFrame={active.from}
+    />
   );
 };

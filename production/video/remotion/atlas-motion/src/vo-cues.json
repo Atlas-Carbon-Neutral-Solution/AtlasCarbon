@@ -1,0 +1,58 @@
+{
+  "_nota": "Sorgente unica delle didascalie. Il testo è verbatim dal §6.2 dello script (una riga per scena), ridistribuito nel tempo in battute da massimo due righe (§7.3). scripts/make_srt.mjs verifica la corrispondenza leggendo lo script stesso e genera l'SRT.",
+  "sceneStart": {
+    "SC01": 0,
+    "SC02": 175,
+    "SC03": 350,
+    "SC04": 600,
+    "SC05": 800,
+    "SC06": 1200,
+    "SC07": 1500,
+    "SC08": 1850
+  },
+  "sceneFrames": {
+    "SC01": 175,
+    "SC02": 175,
+    "SC03": 250,
+    "SC04": 200,
+    "SC05": 400,
+    "SC06": 300,
+    "SC07": 350,
+    "SC08": 200
+  },
+  "cues": {
+    "SC01": [
+      { "text": "Oggi ogni azienda ha un bilancio\ndi sostenibilità.", "from": 22, "to": 174 }
+    ],
+    "SC02": [
+      { "text": "Quasi nessuna ha un dato che regga\nuna verifica esterna.", "from": 14, "to": 168 }
+    ],
+    "SC03": [
+      { "text": "Non lo chiede più solo il regolatore.", "from": 12, "to": 126 },
+      { "text": "Lo chiedono le banche, i capitolati,\ni clienti a monte della tua filiera.", "from": 132, "to": 248 }
+    ],
+    "SC04": [
+      { "text": "Chi stima invece di misurare\npaga due volte.", "from": 12, "to": 92 },
+      { "text": "Paga l'energia che spreca.\nE paga il carbonio che non sa di emettere.", "from": 98, "to": 198 }
+    ],
+    "SC05": [
+      { "text": "Atlas misura. Sensori in campo.", "from": 10, "to": 120 },
+      { "text": "Dati satellitari. Modelli calibrati\nsull'impianto reale.", "from": 130, "to": 270 },
+      { "text": "E un registro notarizzato che nessuno\npuò riscrivere a posteriori: nemmeno noi.", "from": 280, "to": 398 }
+    ],
+    "SC06": [
+      { "text": "Dove misuri, trovi lo spreco.", "from": 14, "to": 126 },
+      { "text": "Dove trovi lo spreco, tagli il costo\nprima ancora dell'emissione.", "from": 134, "to": 212 },
+      { "text": "L'efficienza energetica è la parte della\ndecarbonizzazione che si ripaga da sola.", "from": 220, "to": 298 }
+    ],
+    "SC07": [
+      { "text": "Ciò che non puoi eliminare, lo assorbi.", "from": 14, "to": 146 },
+      { "text": "Ma solo se lo conti davvero: ettaro per\nettaro, pianta per pianta, misura per misura.", "from": 154, "to": 248 },
+      { "text": "Un credito che non si può verificare\nnon vale niente. Un credito misurato, sì.", "from": 256, "to": 348 }
+    ],
+    "SC08": [
+      { "text": "Siamo una Società Benefit. Significa che\nl'impatto che dichiariamo, lo rendicontiamo.", "from": 10, "to": 118 },
+      { "text": "Con lo stesso metodo che vendiamo.", "from": 124, "to": 196 }
+    ]
+  }
+}

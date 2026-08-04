@@ -1,5 +1,6 @@
 import { Img, staticFile, useCurrentFrame } from "remotion";
-import { AZZURRO, FONT, SAFE_BOTTOM, SceneShell, easeInOut } from "../shared";
+import { AZZURRO, FONT, SAFE_TOP, SceneShell, TimedCaption, easeInOut } from "../shared";
+import { VO } from "../vo";
 
 // SC08 — La prova (chi parla) (§5, TC 01:14-01:22, 8s @ 25fps = 200 frame)
 //
@@ -8,6 +9,9 @@ import { AZZURRO, FONT, SAFE_BOTTOM, SceneShell, easeInOut } from "../shared";
 // production/brand/README.md): il brevetto UIBM n. 102025000029407 è depositato
 // per B.R.A.I.N., non per AgroCarbonSense. V08-V12 restano vuote e sono omesse,
 // non inventate (§0.1).
+//
+// La battuta VO del §6.2 («Siamo una Società Benefit...») mancava del tutto:
+// senza voce fuori campo, l'unico modo di veicolarla è la didascalia aperta.
 //
 // Il fondale è un fotogramma renderizzato in Blender ad alta qualità (piastra
 // d'acciaio fresata, luce radente) con un movimento lento di scala: austero per
@@ -50,6 +54,8 @@ export const SC08_Proof: React.FC = () => {
           justifyContent: "center",
           paddingLeft: 140,
           paddingRight: 120,
+          // sale per lasciare la fascia bassa alla didascalia VO del §6.2
+          transform: "translateY(-96px)",
         }}
       >
         <div style={{ display: "flex", flexDirection: "column", gap: 34 }}>
@@ -89,8 +95,8 @@ export const SC08_Proof: React.FC = () => {
       <div
         style={{
           position: "absolute",
-          bottom: SAFE_BOTTOM + 12,
-          right: 84,
+          top: SAFE_TOP + 72,
+          right: 56,
           opacity: teaserIn,
           transform: `translateY(${(1 - teaserIn) * 10}px)`,
           display: "flex",
@@ -104,6 +110,8 @@ export const SC08_Proof: React.FC = () => {
       >
         <span style={{ fontFamily: FONT, fontWeight: 700, fontSize: 19, color: AZZURRO }}>www.atlascarbonneutral.com</span>
       </div>
+
+      <TimedCaption cues={VO.SC08} />
     </SceneShell>
   );
 };

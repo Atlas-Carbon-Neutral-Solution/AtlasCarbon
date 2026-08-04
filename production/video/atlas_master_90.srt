@@ -1,49 +1,79 @@
 1
-00:00:00,000 --> 00:00:07,000
+00:00:00,880 --> 00:00:06,960
 Oggi ogni azienda ha un bilancio
 di sostenibilità.
 
 2
-00:00:07,000 --> 00:00:14,000
+00:00:07,560 --> 00:00:13,720
 Quasi nessuna ha un dato che regga
 una verifica esterna.
 
 3
-00:00:14,000 --> 00:00:24,000
+00:00:14,480 --> 00:00:19,040
 Non lo chiede più solo il regolatore.
+
+4
+00:00:19,280 --> 00:00:23,920
 Lo chiedono le banche, i capitolati,
 i clienti a monte della tua filiera.
 
-4
-00:00:24,000 --> 00:00:32,000
-Chi stima invece di misurare paga due volte.
-Paga l'energia che spreca e il carbonio
-che non sa di emettere.
-
 5
-00:00:32,000 --> 00:00:48,000
-Atlas misura. Sensori in campo. Dati satellitari.
-Modelli calibrati sull'impianto reale. E un registro
-notarizzato che nessuno può riscrivere: nemmeno noi.
+00:00:24,480 --> 00:00:27,680
+Chi stima invece di misurare
+paga due volte.
 
 6
-00:00:48,000 --> 00:01:00,000
-Dove misuri, trovi lo spreco. Dove trovi lo spreco,
-tagli il costo prima ancora dell'emissione.
-L'efficienza energetica si ripaga da sola.
+00:00:27,920 --> 00:00:31,920
+Paga l'energia che spreca.
+E paga il carbonio che non sa di emettere.
 
 7
-00:01:00,000 --> 00:01:14,000
-Ciò che non puoi eliminare, lo assorbi. Ma solo se
-lo conti davvero: ettaro per ettaro, pianta per pianta.
-Un credito che non si può verificare non vale niente.
+00:00:32,400 --> 00:00:36,800
+Atlas misura. Sensori in campo.
 
 8
-00:01:14,000 --> 00:01:22,000
-Siamo una Società Benefit. Significa che l'impatto
-che dichiariamo, lo rendicontiamo — con lo stesso
-metodo che vendiamo.
+00:00:37,200 --> 00:00:42,800
+Dati satellitari. Modelli calibrati
+sull'impianto reale.
 
 9
-00:01:22,000 --> 00:01:30,000
-Atlas. Il dato prima della promessa.
+00:00:43,200 --> 00:00:47,920
+E un registro notarizzato che nessuno
+può riscrivere a posteriori: nemmeno noi.
+
+10
+00:00:48,560 --> 00:00:53,040
+Dove misuri, trovi lo spreco.
+
+11
+00:00:53,360 --> 00:00:56,480
+Dove trovi lo spreco, tagli il costo
+prima ancora dell'emissione.
+
+12
+00:00:56,800 --> 00:00:59,920
+L'efficienza energetica è la parte della
+decarbonizzazione che si ripaga da sola.
+
+13
+00:01:00,560 --> 00:01:05,840
+Ciò che non puoi eliminare, lo assorbi.
+
+14
+00:01:06,160 --> 00:01:09,920
+Ma solo se lo conti davvero: ettaro per
+ettaro, pianta per pianta, misura per misura.
+
+15
+00:01:10,240 --> 00:01:13,920
+Un credito che non si può verificare
+non vale niente. Un credito misurato, sì.
+
+16
+00:01:14,400 --> 00:01:18,720
+Siamo una Società Benefit. Significa che
+l'impatto che dichiariamo, lo rendicontiamo.
+
+17
+00:01:18,960 --> 00:01:21,840
+Con lo stesso metodo che vendiamo.

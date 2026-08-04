@@ -1,5 +1,6 @@
-import { staticFile, useCurrentFrame } from "remotion";
-import { CineVideo, OpenCaption, SceneShell, easeInOut } from "../shared";
+import { staticFile } from "remotion";
+import { CineVideo, SceneShell, TimedCaption } from "../shared";
+import { VO } from "../vo";
 
 // SC02 — Lo stacco sul reale (§5, TC 00:07-00:14, 7s @ 25fps = 175 frame)
 //
@@ -10,14 +11,12 @@ import { CineVideo, OpenCaption, SceneShell, easeInOut } from "../shared";
 // fra le torri. Sorgente: production/video/blender/sc02_aerial.py
 // Impianto generico: nessuna insegna, nessun logo, nessun volto (§2.1).
 
-const VO = "Quasi nessuna ha un dato che regga\nuna verifica esterna.";
 
 export const SC02_StaccoReale: React.FC = () => {
-  const frame = useCurrentFrame();
   return (
     <SceneShell bg="#0b1116">
       <CineVideo src={staticFile("video/sc02-aerial.mp4")} halation={0.22} contrast={1.14} />
-      <OpenCaption text={VO} opacity={easeInOut(frame, 14, 12)} />
+      <TimedCaption cues={VO.SC02} />
     </SceneShell>
   );
 };

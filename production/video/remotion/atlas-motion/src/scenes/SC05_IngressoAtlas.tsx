@@ -1,5 +1,6 @@
-import { Series, staticFile, useCurrentFrame } from "remotion";
-import { CineVideo, OpenCaption, SceneShell, easeInOut } from "../shared";
+import { Series, staticFile } from "remotion";
+import { CineVideo, SceneShell, TimedCaption } from "../shared";
+import { VO } from "../vo";
 
 // SC05 — Ingresso Atlas, perno non tagliabile (§5, TC 00:32-00:48, 16s = 400 frame)
 //
@@ -17,14 +18,11 @@ import { CineVideo, OpenCaption, SceneShell, easeInOut } from "../shared";
 //   3  125 frame  blocchi d'acciaio che si incatenano con saldature di luce: il
 //                 registro notarizzato come oggetto fisico (sc05c_ledger.py)
 
-const VO =
-  "Atlas misura. Sensori in campo. Dati satellitari.\nModelli calibrati sull'impianto reale. E un registro\nnotarizzato che nessuno può riscrivere: nemmeno noi.";
 
 export const MOV = { SENSOR: 125, ORBIT: 150, LEDGER: 125 } as const;
 export const SC05_TOTAL = MOV.SENSOR + MOV.ORBIT + MOV.LEDGER; // 400
 
 export const SC05_IngressoAtlas: React.FC = () => {
-  const frame = useCurrentFrame();
   return (
     <SceneShell bg="#0a0c0f">
       <Series>
@@ -38,7 +36,7 @@ export const SC05_IngressoAtlas: React.FC = () => {
           <CineVideo src={staticFile("video/sc05c-ledger.mp4")} halation={0.24} />
         </Series.Sequence>
       </Series>
-      <OpenCaption text={VO} opacity={easeInOut(frame, 10, 12)} />
+      <TimedCaption cues={VO.SC05} />
     </SceneShell>
   );
 };

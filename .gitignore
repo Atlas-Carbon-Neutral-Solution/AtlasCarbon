@@ -5,3 +5,4 @@ production/video/blender/test0*/
 production/video/blender/frames/
 production/video/blender/*.log
 production/video/blender/__pycache__/
+production/video/output/atlas_master_90_silent.mp4
