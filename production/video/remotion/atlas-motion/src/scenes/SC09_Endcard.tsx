@@ -1,5 +1,5 @@
 import { Img, staticFile, useCurrentFrame } from "remotion";
-import { AZZURRO, FONT, SceneShell, easeInOut } from "../shared";
+import { AZZURRO, FONT, SAFE_BOTTOM, SceneShell, easeInOut } from "../shared";
 
 // SC09 — Endcard e CTA (script §5, TC 01:22-01:30, 8s @ 25fps = 200 frame)
 //
@@ -35,7 +35,7 @@ export const SC09_Endcard: React.FC = () => {
           <Img
             src={staticFile("logo/atlas-logo-bianco.png")}
             style={{
-              width: 560,
+              width: 500,
               opacity: logoIn,
               filter: `blur(${(1 - logoIn) * 10}px)`,
               transform: `scale(${logoScale})`,
@@ -44,7 +44,7 @@ export const SC09_Endcard: React.FC = () => {
 
           <div
             style={{
-              marginTop: 52,
+              marginTop: 40,
               opacity: payoffIn,
               filter: `blur(${(1 - payoffIn) * 6}px)`,
               transform: `translateY(${(1 - payoffIn) * 10}px)`,
@@ -61,7 +61,7 @@ export const SC09_Endcard: React.FC = () => {
           {/* CTA — bottone pillola, non solo testo */}
           <div
             style={{
-              marginTop: 44,
+              marginTop: 34,
               opacity: ctaIn,
               transform: `translateY(${(1 - ctaIn) * 10}px) scale(${pulse})`,
               display: "flex",
@@ -81,7 +81,7 @@ export const SC09_Endcard: React.FC = () => {
         <div
           style={{
             position: "absolute",
-            bottom: 52,
+            bottom: SAFE_BOTTOM,
             left: 0,
             right: 0,
             textAlign: "center",
@@ -98,8 +98,8 @@ export const SC09_Endcard: React.FC = () => {
         <div
           style={{
             position: "absolute",
-            bottom: 52,
-            left: 52,
+            bottom: SAFE_BOTTOM,
+            left: 84,
             width: 72,
             height: 3,
             backgroundColor: AZZURRO,

@@ -1,0 +1,27 @@
+#!/bin/bash
+# Verifica strutturale: ogni clip deve coprire per intero la sequenza che lo
+# ospita. Un clip più corto della sua sequenza fa congelare l'ultimo fotogramma
+# (è il difetto che ha prodotto il "3D che si blocca sul niente" in SC05).
+set -uo pipefail
+cd "$(dirname "$0")/remotion/atlas-motion/public/video"
+fail=0
+check() {
+  local file="$1" expected="$2"
+  if [ ! -f "$file" ]; then echo "MANCA   $file (attesi $expected frame)"; fail=1; return; fi
+  local n; n=$(ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames -of csv=p=0 "$file")
+  if [ "$n" -lt "$expected" ]; then
+    echo "CORTO   $file: $n frame < $expected attesi"; fail=1
+  else
+    printf "ok      %-22s %s frame (>= %s)\n" "$file" "$n" "$expected"
+  fi
+}
+check sc01-report.mp4  175
+check sc02-aerial.mp4  175
+check sc03-office.mp4  250
+check sc04-plant.mp4   200
+check sc05a-sensor.mp4 125
+check sc05b-orbit.mp4  150
+check sc05c-ledger.mp4 125
+check sc06-thermal.mp4 300
+check sc07-bamboo.mp4  350
+exit $fail

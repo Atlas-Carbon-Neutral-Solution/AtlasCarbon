@@ -1,2 +1,5 @@
 frames/
 render.log
+frames_*/
+test0*/
+render_queue_now.sh
