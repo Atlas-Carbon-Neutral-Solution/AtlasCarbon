@@ -14,16 +14,17 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import cine
 
-argv = sys.argv[sys.argv.index("--") + 1:]
-OUT_DIR = argv[0]
-N_FRAMES = int(argv[1])
-RES_X = int(argv[2]) if len(argv) > 2 else 1920
-RES_Y = int(argv[3]) if len(argv) > 3 else 1080
+OUT_DIR, N_FRAMES, RES_X, RES_Y, ONLY = cine.parse_argv(sys.argv[sys.argv.index("--") + 1:])
 
 cine.reset_scene()
-scene = cine.setup_eevee(RES_X, RES_Y, samples=16, world_rgb=(0.010, 0.011, 0.013))
+scene = cine.setup_eevee(RES_X, RES_Y, samples=14, world_rgb=(0.010, 0.011, 0.013),
+                         volumetrics=True, vol_end=8.0)
 scene.eevee.shadow_cube_size = "1024"
 scene.eevee.use_ssr_refraction = False
+scene.eevee.use_soft_shadows = False
+scene.eevee.bokeh_max_size = 28
+cine.add_fog_volume((0, 0.6, 0.7), (7.0, 6.0, 2.4), density=0.030,
+                    color=(0.60, 0.64, 0.70))
 
 W, D = 0.62, 0.44  # mezza larghezza / mezza profondita'
 TH = 0.030         # spessore blocco pagine
@@ -41,7 +42,7 @@ cine.assign(wall, cine.pbr_material("Wall", (0.034, 0.037, 0.042), roughness=0.8
 bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, TH / 2))
 pages = bpy.context.object
 pages.scale = (W * 2, D * 2, TH)
-cine.assign(pages, cine.pbr_material("Pages", (0.80, 0.80, 0.78), roughness=0.64, specular=0.22))
+cine.assign(pages, cine.pbr_material("Pages", (0.330, 0.328, 0.318), roughness=0.34, specular=0.58))
 
 # --- copertina: l'ORIGINE dell'oggetto e' la cerniera sul bordo lontano (+Y).
 # Sposto i vertici in local space invece di usare un parent: cosi' la rotazione
@@ -55,12 +56,12 @@ for v in cover.data.vertices:
     v.co.y -= D  # la mesh si estende da y=-2D a y=0 rispetto all'origine
 COVER_Z = TH + 0.010
 cover.location = (0, D, COVER_Z)
-cine.assign(cover, cine.pbr_material("Cover", (0.86, 0.87, 0.88), roughness=0.11, specular=0.9))
+cine.assign(cover, cine.pbr_material("Cover", (0.052, 0.056, 0.062), roughness=0.09, specular=1.0))
 hinge = cover  # la copertina stessa e' la cerniera
 
 # --- grafica in rilievo SULLA PAGINA (astratta, nessun testo leggibile)
-ring_mat = cine.pbr_material("RingInk", (0.40, 0.42, 0.45), roughness=0.34, specular=0.5)
-bar_mat = cine.pbr_material("BarInk", (0.54, 0.55, 0.57), roughness=0.5, specular=0.35)
+ring_mat = cine.pbr_material("RingInk", (0.148, 0.156, 0.170), roughness=0.30, specular=0.55)
+bar_mat = cine.pbr_material("BarInk", (0.225, 0.232, 0.244), roughness=0.46, specular=0.40)
 
 Z_INK = TH + 0.0015
 for rx, maj in [(-0.34, 0.105), (-0.03, 0.080)]:
@@ -80,10 +81,10 @@ for i in range(5):
 bpy.ops.mesh.primitive_cube_add(size=1, location=(0.34, 0.05, Z_INK))
 photo = bpy.context.object
 photo.scale = (0.46, 0.56, 0.003)
-cine.assign(photo, cine.pbr_material("Photo", (0.34, 0.37, 0.35), roughness=0.42, specular=0.45))
+cine.assign(photo, cine.pbr_material("Photo", (0.118, 0.132, 0.125), roughness=0.40, specular=0.50))
 
 # --- luci: radente calda principale, fill freddo, rim
-key = cine.add_area_light((-2.6, -1.4, 0.70), (74, 0, -58), energy=300, size=1.9, color=(1.0, 0.95, 0.88))
+key = cine.add_area_light((-1.9, -1.15, 0.30), (85, 0, -62), energy=105, size=0.55, color=(1.0, 0.93, 0.84))
 cine.add_area_light((2.8, 2.4, 2.2), (48, 0, 148), energy=52, size=4.2, color=(0.70, 0.79, 0.93))
 cine.add_area_light((1.8, -2.2, 0.40), (86, 0, 26), energy=34, size=1.1, color=(0.86, 0.91, 1.0))
 
@@ -99,7 +100,7 @@ def animate(f):
     cam.location.z = 1.34 - t * 0.03
     cam.data.dof.focus_distance = 2.40 - t * 0.04
     # luce radente che scorre
-    key.location.x = -2.6 + t * 0.9
+    key.location.x = -1.9 + t * 0.75
 
     snap_start = int(N_FRAMES * 0.80)
     if f < snap_start:
@@ -110,4 +111,4 @@ def animate(f):
         hinge.rotation_euler = (math.radians(OPEN_DEG * (1 - eased)), 0, 0)
 
 
-cine.render_frames(OUT_DIR, N_FRAMES, animate)
+cine.render_frames(OUT_DIR, N_FRAMES, animate, only=ONLY)

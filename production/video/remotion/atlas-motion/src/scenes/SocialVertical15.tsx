@@ -82,7 +82,6 @@ const Endcard: React.FC = () => {
         style={{
           width: 700,
           opacity: logoIn,
-          filter: `blur(${(1 - logoIn) * 12}px)`,
           transform: `scale(${0.92 + logoIn * 0.08})`,
         }}
       />

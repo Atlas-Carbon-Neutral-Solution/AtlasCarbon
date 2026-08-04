@@ -12,7 +12,7 @@ export const SC01_Apertura: React.FC = () => {
   const frame = useCurrentFrame();
   return (
     <SceneShell bg="#07090a">
-      <CineVideo src={staticFile("video/sc01-report.mp4")} halation={0.2} drift={1} brightness={0.74} contrast={1.2} />
+      <CineVideo src={staticFile("video/sc01-report.mp4")} halation={0.2} drift={1} brightness={0.94} contrast={1.12} />
       <OpenCaption text={VO} opacity={easeInOut(frame, 22, 12)} />
     </SceneShell>
   );

@@ -40,7 +40,7 @@ steel = cine.pbr_material("Steel", (0.300, 0.315, 0.330), roughness=0.30, metall
 cable_m = cine.pbr_material("Cable", (0.042, 0.045, 0.050), roughness=0.72)
 grip_m = cine.pbr_material("Grip", (0.062, 0.065, 0.070), roughness=0.88)
 led_m = cine.pbr_material("Led", AZZURRO, roughness=0.25,
-                          emission_rgb=AZZURRO, emission_strength=9.0)
+                          emission_rgb=AZZURRO, emission_strength=2.6)
 drop_m = cine.pbr_material("Drop", (0.42, 0.46, 0.52), roughness=0.28, specular=0.70)
 wall_m = cine.pbr_material("Wall", (0.070, 0.074, 0.082), roughness=0.92)
 
@@ -139,7 +139,7 @@ def per_frame(f):
     cam.data.dof.aperture_fstop = 2.4
     # il LED respira come un vero indicatore di stato
     led_m.node_tree.nodes["Principled BSDF"].inputs["Emission Strength"].default_value = \
-        7.0 + 5.0 * (0.5 + 0.5 * math.sin(f * 0.20))
+        2.2 + 1.6 * (0.5 + 0.5 * math.sin(f * 0.20))
 
 
 cine.render_frames(OUT_DIR, N_FRAMES, per_frame, only=ONLY)

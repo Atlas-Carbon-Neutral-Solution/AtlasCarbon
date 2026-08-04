@@ -37,7 +37,6 @@ export const SC09_Endcard: React.FC = () => {
             style={{
               width: 500,
               opacity: logoIn,
-              filter: `blur(${(1 - logoIn) * 10}px)`,
               transform: `scale(${logoScale})`,
             }}
           />
