@@ -12,7 +12,7 @@ export const SC04_Approssimazione: React.FC = () => {
   const frame = useCurrentFrame();
   return (
     <SceneShell bg="#050607">
-      <CineVideo src={staticFile("video/sc04-plant.mp4")} halation={0.2} />
+      <CineVideo src={staticFile("video/sc04-plant.mp4")} halation={0.2} brightness={1.28} contrast={1.14} />
       <OpenCaption text={VO} opacity={easeInOut(frame, 14, 12)} />
     </SceneShell>
   );

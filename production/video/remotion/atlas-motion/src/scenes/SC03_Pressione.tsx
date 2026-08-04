@@ -12,7 +12,7 @@ export const SC03_Pressione: React.FC = () => {
   const frame = useCurrentFrame();
   return (
     <SceneShell bg="#0a0d10">
-      <CineVideo src={staticFile("video/sc03-office.mp4")} halation={0.15} drift={1} />
+      <CineVideo src={staticFile("video/sc03-office.mp4")} halation={0.15} drift={1} brightness={0.88} contrast={1.2} />
       <OpenCaption text={VO} opacity={easeInOut(frame, 12, 12)} />
     </SceneShell>
   );

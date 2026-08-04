@@ -40,9 +40,10 @@ export const CineVideo: React.FC<{
   halation?: number;
   contrast?: number;
   saturate?: number;
+  brightness?: number;
   /** micro-movimento aggiuntivo, per rompere la fissità dove la camera 3D è lenta */
   drift?: number;
-}> = ({ src, halation = 0.17, contrast = 1.1, saturate = 0.9, drift = 0 }) => {
+}> = ({ src, halation = 0.17, contrast = 1.1, saturate = 0.9, brightness = 1, drift = 0 }) => {
   const frame = useCurrentFrame();
   const scale = drift ? 1 + drift * (0.004 + 0.003 * Math.sin(frame / 90)) : 1;
   const dx = drift ? Math.sin(frame / 110) * drift * 5 : 0;
@@ -55,7 +56,7 @@ export const CineVideo: React.FC<{
     <div style={wrap}>
       <OffthreadVideo
         src={src}
-        style={{ ...COVER, filter: `saturate(${saturate}) contrast(${contrast})` }}
+        style={{ ...COVER, filter: `saturate(${saturate}) contrast(${contrast}) brightness(${brightness})` }}
       />
       <OffthreadVideo
         src={src}
@@ -193,7 +194,7 @@ export const OpenCaption: React.FC<{ text: string; opacity?: number; align?: "le
     <div
       style={{
         position: "absolute",
-        bottom: SAFE_BOTTOM + 18,
+        bottom: SAFE_BOTTOM + 36,
         left: align === "center" ? 0 : "7%",
         right: align === "center" ? 0 : "12%",
         textAlign: align,
