@@ -6,6 +6,17 @@ set -uo pipefail
 cd "$(dirname "$0")"
 PUB=remotion/atlas-motion/public/video
 
+# SC01 e SC05a vengono RI-renderizzate (chiave bassa / LED azzurro) da
+# blender/chain_sc01.sh: i loro mp4 esistono già con il conteggio giusto, quindi
+# il solo controllo sui fotogrammi non basta — il master partirebbe sulle versioni
+# vecchie, o su un file a metà scrittura. Si attende il marcatore della catena.
+CHAIN_LOG=/tmp/chain01.log
+if [ -f "$CHAIN_LOG" ]; then
+  echo "== attesa ri-render di SC01 e SC05a =="
+  until grep -q "CHAIN_DONE" "$CHAIN_LOG"; do sleep 30; done
+  echo "catena completata $(date +%H:%M:%S)"
+fi
+
 echo "== attesa clip =="
 while :; do
   missing=0
