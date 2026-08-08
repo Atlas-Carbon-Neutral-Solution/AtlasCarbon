@@ -23,7 +23,7 @@ scene.eevee.shadow_cube_size = "1024"
 scene.eevee.use_ssr_refraction = False
 scene.eevee.use_soft_shadows = False
 scene.eevee.bokeh_max_size = 28
-cine.add_fog_volume((0, 0.6, 0.7), (7.0, 6.0, 2.4), density=0.030,
+cine.add_fog_volume((0, 0.55, 0.60), (5.0, 4.4, 1.5), density=0.006,
                     color=(0.60, 0.64, 0.70))
 
 W, D = 0.62, 0.44  # mezza larghezza / mezza profondita'
@@ -42,7 +42,7 @@ cine.assign(wall, cine.pbr_material("Wall", (0.034, 0.037, 0.042), roughness=0.8
 bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, TH / 2))
 pages = bpy.context.object
 pages.scale = (W * 2, D * 2, TH)
-cine.assign(pages, cine.pbr_material("Pages", (0.330, 0.328, 0.318), roughness=0.34, specular=0.58))
+cine.assign(pages, cine.pbr_material("Pages", (0.235, 0.233, 0.226), roughness=0.34, specular=0.58))
 
 # --- copertina: l'ORIGINE dell'oggetto e' la cerniera sul bordo lontano (+Y).
 # Sposto i vertici in local space invece di usare un parent: cosi' la rotazione
@@ -83,32 +83,114 @@ photo = bpy.context.object
 photo.scale = (0.46, 0.56, 0.003)
 cine.assign(photo, cine.pbr_material("Photo", (0.118, 0.132, 0.125), roughness=0.40, specular=0.50))
 
+# --- oggetti di scena: danno scala, contesto e parallasse al movimento
+stack_mat = cine.pbr_material("Stack", (0.062, 0.066, 0.072), roughness=0.30, specular=0.75)
+sheet_mat = cine.pbr_material("Sheet", (0.165, 0.164, 0.158), roughness=0.62, specular=0.30)
+pen_mat = cine.pbr_material("Pen", (0.040, 0.042, 0.046), roughness=0.24, specular=0.85)
+steel_mat = cine.pbr_material("Steel", (0.330, 0.342, 0.356), roughness=0.28, metallic=0.90)
+
+# due fascicoli chiusi a sinistra, leggermente disallineati
+for i, (dx, dy, rot) in enumerate(((-1.02, 0.10, 6.0), (-0.97, 0.05, -3.5))):
+    bpy.ops.mesh.primitive_cube_add(size=1, location=(dx, dy, 0.017 + i * 0.034))
+    bk = bpy.context.object
+    bk.scale = (0.60, 0.84, 0.032)
+    bk.rotation_euler = (0, 0, math.radians(rot))
+    cine.assign(bk, stack_mat)
+
+# fogli sciolti a destra, non allineati
+for i, (dx, dy, rot) in enumerate(((0.95, -0.16, -9.0), (1.02, -0.10, 4.0), (0.90, -0.05, -2.0))):
+    bpy.ops.mesh.primitive_cube_add(size=1, location=(dx, dy, 0.003 + i * 0.0035))
+    sh = bpy.context.object
+    sh.scale = (0.56, 0.78, 0.0028)
+    sh.rotation_euler = (0, 0, math.radians(rot))
+    cine.assign(sh, sheet_mat)
+
+# penna appoggiata di traverso sulla pagina
+bpy.ops.mesh.primitive_cylinder_add(radius=0.0085, depth=0.30,
+                                    location=(0.34, -0.30, TH + 0.012), vertices=20)
+pen = bpy.context.object
+pen.rotation_euler = (0, math.radians(90), math.radians(24))
+cine.assign(pen, pen_mat)
+bpy.ops.mesh.primitive_cone_add(radius1=0.0085, radius2=0.001, depth=0.030,
+                                location=(0.34 + 0.137, -0.30 - 0.061, TH + 0.012), vertices=16)
+tip = bpy.context.object
+tip.rotation_euler = (0, math.radians(90), math.radians(24))
+cine.assign(tip, steel_mat)
+
+# graffetta metallica: un dettaglio piccolo che il macro puo' trovare
+bpy.ops.mesh.primitive_torus_add(location=(-0.46, -0.30, TH + 0.004),
+                                 major_radius=0.026, minor_radius=0.0032,
+                                 major_segments=28, minor_segments=8)
+clip = bpy.context.object
+clip.scale = (1.0, 0.42, 1.0)
+clip.rotation_euler = (0, 0, math.radians(-18))
+cine.assign(clip, steel_mat)
+
 # --- luci: radente calda principale, fill freddo, rim
-key = cine.add_area_light((-1.9, -1.15, 0.30), (85, 0, -62), energy=105, size=0.55, color=(1.0, 0.93, 0.84))
+key = cine.add_area_light((-1.9, -1.15, 0.30), (85, 0, -62), energy=62, size=0.55, color=(1.0, 0.93, 0.84))
 cine.add_area_light((2.8, 2.4, 2.2), (48, 0, 148), energy=52, size=4.2, color=(0.70, 0.79, 0.93))
 cine.add_area_light((1.8, -2.2, 0.40), (86, 0, 26), energy=34, size=1.1, color=(0.86, 0.91, 1.0))
 
-# --- camera: 50mm arretrata, inclinata per leggere la pagina intera
-cam = cine.add_camera((-0.05, -1.98, 1.34), (52, 0, 0), lens=50.0, focus_distance=2.40, fstop=2.4)
+# --- camera: due inquadrature con stacco netto, come le altre scene.
+#   A  macro radente sulla pagina stampata, carrello laterale, fuoco corto
+#   B  tre quarti piu' ampio con i fascicoli in campo: qui la copertina scatta
+# Prima era una sola inquadratura lenta: era l'unica scena del montaggio senza
+# stacco interno, e si vedeva.
+cam = cine.add_camera((-0.42, -0.86, 0.30), (68, 0, 0), lens=58.0, focus_distance=0.95, fstop=2.0)
 
 OPEN_DEG = -168.0  # copertina ribaltata indietro, quasi piatta
 
 
-def animate(f):
-    t = (f - 1) / max(1, N_FRAMES - 1)
-    cam.location.x = -0.05 + t * 0.13
-    cam.location.z = 1.34 - t * 0.03
-    cam.data.dof.focus_distance = 2.40 - t * 0.04
-    # luce radente che scorre
-    key.location.x = -1.9 + t * 0.75
+CUT = int(N_FRAMES * 0.55)         # ~frame 96 su 175
 
-    snap_start = int(N_FRAMES * 0.80)
+
+def handheld(f, amp=1.0):
+    """Micro-instabilita' da spalla: nessuna delle due inquadrature e' su cavalletto."""
+    return (math.sin(f * 0.29) * 0.0022 * amp,
+            math.sin(f * 0.22 + 1.3) * 0.0018 * amp,
+            math.sin(f * 0.37 + 0.5) * 0.0015 * amp)
+
+
+def animate(f):
+    if f <= CUT:
+        # A: macro radente, carrello da sinistra a destra sulla pagina stampata
+        t = (f - 1) / max(1, CUT - 1)
+        e = t * t * (3 - 2 * t)
+        cam.location = (-0.46 + e * 0.62, -0.88 + e * 0.06, 0.30 - e * 0.03)
+        cam.rotation_euler = (math.radians(68 + e * 3.0), 0, math.radians(-1.5 + e * 3.0))
+        cam.data.lens = 58.0
+        cam.data.dof.focus_distance = 0.95 - e * 0.06
+        cam.data.dof.aperture_fstop = 2.0
+        key.location.x = -1.9 + t * 0.55
+    else:
+        # B: tre quarti, i fascicoli entrano in campo, la copertina scatta qui
+        t = (f - CUT - 1) / max(1, N_FRAMES - CUT - 1)
+        e = t * t * (3 - 2 * t)
+        cam.location = (-0.16 + e * 0.16, -1.86 - e * 0.10, 1.24 + e * 0.05)
+        cam.rotation_euler = (math.radians(53 - e * 1.6), 0, math.radians(2.5 - e * 4.0))
+        cam.data.lens = 44.0
+        cam.data.dof.focus_distance = 2.28 - e * 0.05
+        cam.data.dof.aperture_fstop = 2.8
+        key.location.x = -1.35 + t * 0.5
+
+    dx, dy, dz = handheld(f, 1.0 if f <= CUT else 1.4)
+    cam.location = (cam.location[0] + dx, cam.location[1] + dy, cam.location[2] + dz)
+
+    # Lo scatto della copertina cade DENTRO l'inquadratura B e con un rimbalzo,
+    # cosi' si vede arrivare e assestarsi. Prima partiva all'80% e la scena
+    # finiva prima che il movimento si esaurisse.
+    snap_start = int(N_FRAMES * 0.62)
+    snap_len = max(1.0, N_FRAMES * 0.13)
     if f < snap_start:
         hinge.rotation_euler = (math.radians(OPEN_DEG), 0, 0)
     else:
-        p = min(1.0, (f - snap_start) / max(1.0, (N_FRAMES - snap_start) * 0.55))
+        p = min(1.0, (f - snap_start) / snap_len)
         eased = p * p * (3 - 2 * p)
-        hinge.rotation_euler = (math.radians(OPEN_DEG * (1 - eased)), 0, 0)
+        ang = OPEN_DEG * (1 - eased)
+        if p >= 1.0:
+            k = min(1.0, (f - snap_start - snap_len) / max(1.0, N_FRAMES * 0.05))
+            ang = -3.2 * math.sin(k * math.pi) * (1.0 - k)   # rimbalzo secco
+        hinge.rotation_euler = (math.radians(ang), 0, 0)
 
 
 cine.render_frames(OUT_DIR, N_FRAMES, animate, only=ONLY)

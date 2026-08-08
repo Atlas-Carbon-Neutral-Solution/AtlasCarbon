@@ -13,11 +13,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import cine
 
-argv = sys.argv[sys.argv.index("--") + 1:]
-OUT_DIR = argv[0]
-N_FRAMES = int(argv[1])
-RES_X = int(argv[2]) if len(argv) > 2 else 1920
-RES_Y = int(argv[3]) if len(argv) > 3 else 1080
+OUT_DIR, N_FRAMES, RES_X, RES_Y, ONLY = cine.parse_argv(sys.argv[sys.argv.index("--") + 1:])
 
 cine.reset_scene()
 scene = cine.setup_eevee(RES_X, RES_Y, samples=16, world_rgb=(0.004, 0.0045, 0.005))
@@ -139,7 +135,7 @@ for i in range(6):
     digits.append(txt)
 
 # --- luci: ambiente notturno molto basso + torcia in movimento
-cine.add_area_light((-2.0, -1.0, 3.2), (28, 0, -20), energy=42, size=5.0, color=(0.55, 0.66, 0.85))
+cine.add_area_light((-2.0, -1.0, 3.2), (28, 0, -20), energy=30, size=5.0, color=(0.62, 0.58, 0.54))
 torch = cine.add_spot((1.9, -1.5, 1.55), (74, 0, 34), energy=900, spot_size_deg=52, blend=0.55,
                       color=(1.0, 0.93, 0.80))
 
@@ -153,6 +149,14 @@ def digit_at(f, slot):
     return str(int(abs(math.sin(f * 0.31 + slot * 7.7)) * 10) % 10)
 
 
+def handheld(f, amp=1.0):
+    """Micro-instabilita' da spalla: qui la luce e' una torcia in mano, non un
+    faro su cavalletto, e l'inquadratura deve dirlo."""
+    return (math.sin(f * 0.31) * 0.006 * amp,
+            math.sin(f * 0.23 + 1.7) * 0.005 * amp,
+            math.sin(f * 0.41 + 0.6) * 0.004 * amp)
+
+
 def animate(f):
     for i, txt in enumerate(digits):
         txt.data.body = digit_at(f, i)
@@ -162,23 +166,27 @@ def animate(f):
         t = (f - 1) / max(1, CUT - 1)
         cam.location = (-1.52 + t * 0.06, -0.05 + t * 0.20, 1.235 - t * 0.008)
         cam.rotation_euler = (math.radians(87), 0, math.radians(-1 + t * 1.2))
-        cam.data.lens = 45.0
+        cam.data.lens = 38.0
+        dx, dy, dz = handheld(f, 0.8)
+        cam.location = (cam.location[0] + dx, cam.location[1] + dy, cam.location[2] + dz)
         cam.data.dof.focus_distance = 1.45 - t * 0.20
         cam.data.dof.aperture_fstop = 2.2
         torch.location = (-0.55, 0.10, 2.05)
         torch.rotation_euler = (math.radians(46), 0, math.radians(-16))
-        torch.data.energy = 420
+        torch.data.energy = 560
     else:
         # B: valvola che perde vapore, torcia che spazza
         t = (f - CUT) / max(1, N_FRAMES - CUT)
         cam.location = (1.30 - t * 0.26, -0.55, 1.20 + t * 0.05)
         cam.rotation_euler = (math.radians(88.5), 0, math.radians(15 - t * 4))
-        cam.data.lens = 60.0
+        cam.data.lens = 72.0
+        dx, dy, dz = handheld(f, 1.4)
+        cam.location = (cam.location[0] + dx, cam.location[1] + dy, cam.location[2] + dz)
         cam.data.dof.focus_distance = 2.80
         cam.data.dof.aperture_fstop = 2.0
         torch.location = (1.6 - t * 1.9, -1.2, 1.45)
         torch.rotation_euler = (math.radians(72), 0, math.radians(30 - t * 40))
-        torch.data.energy = 620
+        torch.data.energy = 820
 
     # vapore: sale, si allarga, sfuma
     for s, mult, i in steam:
@@ -188,7 +196,7 @@ def animate(f):
         gro = 0.13 + i * 0.012 + ph * 0.22
         s.scale = (gro, gro * 1.25, 1.0)
         fade = math.sin(min(1.0, ph / 0.22) * math.pi * 0.5) * (1.0 - ph) ** 0.8
-        mult.inputs[1].default_value = max(0.0, 0.16 * fade * (1.0 if f >= CUT else 0.30))
+        mult.inputs[1].default_value = max(0.0, 0.24 * fade * (1.0 if f >= CUT else 0.30))
 
 
-cine.render_frames(OUT_DIR, N_FRAMES, animate)
+cine.render_frames(OUT_DIR, N_FRAMES, animate, only=ONLY)
