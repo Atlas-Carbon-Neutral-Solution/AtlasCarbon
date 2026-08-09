@@ -26,7 +26,7 @@ OUT_DIR, N_FRAMES, RES_X, RES_Y, ONLY = cine.parse_argv(sys.argv[sys.argv.index(
 rnd = random.Random(23)
 
 cine.reset_scene()
-cine.setup_eevee(RES_X, RES_Y, samples=10, bloom=True, volumetrics=True, vol_end=90.0)
+cine.setup_eevee(RES_X, RES_Y, samples=10, bloom=True, volumetrics=True, vol_end=65.0)
 _ee = bpy.context.scene.eevee
 _ee.bloom_intensity = 0.055
 _ee.bloom_radius = 6.2
@@ -56,7 +56,11 @@ leaf_m = cine.pbr_material("Leaf", (0.122, 0.182, 0.072), roughness=0.48, specul
                            emission_rgb=(0.145, 0.225, 0.088), emission_strength=0.55)
 soil = cine.pbr_material("Soil", (0.105, 0.088, 0.062), roughness=0.94, specular=0.14)
 litter = cine.pbr_material("Litter", (0.168, 0.142, 0.092), roughness=0.90)
-steel = cine.pbr_material("Steel", (0.340, 0.352, 0.365), roughness=0.38, metallic=0.88)
+# Fascetta: acciaio spazzolato, con la satinatura orientata lungo la
+# circonferenza. Con il rumore isotropo la fascetta risultava a chiazze e leggeva
+# come cartoncino verniciato, non come metallo.
+steel = cine.pbr_material("Steel", (0.340, 0.352, 0.365), roughness=0.30, metallic=0.92,
+                          rough_break=0.06, tex_scale=260.0, stretch=(9.0, 9.0, 0.35))
 AZZURRO = (0.325, 0.643, 0.859)   # #53a4db — V01
 azz = cine.pbr_material("Azz", AZZURRO, roughness=0.35,
                         emission_rgb=AZZURRO, emission_strength=1.4)
@@ -65,10 +69,10 @@ azz = cine.pbr_material("Azz", AZZURRO, roughness=0.35,
 bpy.ops.mesh.primitive_plane_add(size=600, location=(0, 0, 0))
 cine.assign(bpy.context.object, soil)
 for i in range(340):                      # lettiera: il suolo si legge, non e' un vuoto
-    bpy.ops.mesh.primitive_plane_add(size=1,
-                                     location=(rnd.uniform(-22, 22), rnd.uniform(-10, 70), 0.030))
-    lf = bpy.context.object
-    lf.scale = (rnd.uniform(0.12, 0.34), rnd.uniform(0.035, 0.10), 1)
+    ll = rnd.uniform(0.14, 0.36)
+    lf = cine.leaf_blade(f"Litter{i}", ll, ll * rnd.uniform(0.12, 0.22),
+                         bend=ll * 0.10, segments=3)
+    lf.location = (rnd.uniform(-22, 22), rnd.uniform(-10, 70), 0.030)
     lf.rotation_euler = (rnd.uniform(-0.14, 0.14), 0, rnd.uniform(0, 6.28))
     cine.assign(lf, litter)
 
@@ -78,46 +82,72 @@ def build_master_culm(height, radius, mat):
     """Un culmo completo (fusto + nodi + rami alti), costruito una volta sola e
     poi duplicato in linked-duplicate: centinaia di piante a costo contenuto."""
     parts = []
-    bpy.ops.mesh.primitive_cylinder_add(radius=radius, depth=height, location=(0, 0, height / 2), vertices=12)
+    # Cono, non cilindro: un culmo si rastrema salendo. Un fusto a diametro
+    # costante per tredici metri e' un tubo, e si vede che e' un tubo.
+    TAPER = 0.58
+    bpy.ops.mesh.primitive_cone_add(radius1=radius, radius2=radius * TAPER, depth=height,
+                                    location=(0, 0, height / 2), vertices=16)
     stem = bpy.context.object
     cine.assign(stem, mat)
     parts.append(stem)
     n_nodes = max(4, int(height / 1.05))
     for k in range(1, n_nodes):
         z = k * (height / n_nodes)
-        bpy.ops.mesh.primitive_cylinder_add(radius=radius * 1.22, depth=radius * 0.85,
-                                            location=(0, 0, z), vertices=12)
+        r_z = radius * (1.0 - (1.0 - TAPER) * (z / height))   # l'anello segue la rastremazione
+        bpy.ops.mesh.primitive_cylinder_add(radius=r_z * 1.22, depth=r_z * 0.85,
+                                            location=(0, 0, z), vertices=10)
         cine.assign(bpy.context.object, node_m)
         parts.append(bpy.context.object)
-    # rami e ciuffi di foglie nella parte alta: senza questi e' un campo di stecchi
-    for k in range(8):
-        z = height * (0.66 + 0.33 * (k / 8.0))
-        a = k * 2.399
-        br = radius * 0.38
-        bl = rnd.uniform(0.5, 1.15)
+    # Chioma. Prima erano 8 rami quasi orizzontali con 3 foglie grandi ciascuno:
+    # visti dalla gru i culmi leggevano come stecchi e i rami come ramaglia
+    # incrociata. Un bambuseto ha una massa di fogliame nel terzo alto, fatta di
+    # molte foglie piccole raccolte in ciuffi verso la punta del ramo, e i rami
+    # salgono — non stanno a squadra col fusto.
+    for k in range(11):
+        z = height * (0.52 + 0.47 * (k / 11.0))
+        a = k * 2.399                      # angolo d'oro: distribuzione non ripetitiva
+        br = radius * 0.26                 # rami piu' sottili
+        bl = rnd.uniform(0.42 + 0.5 * (z / height), 1.05)
+        up = math.radians(rnd.uniform(38, 52))     # inclinazione verso l'alto
         bpy.ops.mesh.primitive_cylinder_add(radius=br, depth=bl,
-                                            location=(math.cos(a) * bl * 0.4, math.sin(a) * bl * 0.4, z),
+                                            location=(math.cos(a) * bl * 0.32,
+                                                      math.sin(a) * bl * 0.32,
+                                                      z + bl * 0.30),
                                             vertices=6)
         b = bpy.context.object
-        b.rotation_euler = (math.radians(62) * math.sin(a), math.radians(62) * math.cos(a), 0)
+        b.rotation_euler = (up * math.sin(a), up * math.cos(a), 0)
         cine.assign(b, node_m)
         parts.append(b)
-        for j in range(3):
-            ll = rnd.uniform(0.20, 0.46)
-            bpy.ops.mesh.primitive_plane_add(
-                size=1, location=(math.cos(a) * (bl * 0.75 + rnd.uniform(-0.2, 0.3)),
-                                  math.sin(a) * (bl * 0.75 + rnd.uniform(-0.2, 0.3)),
-                                  z + rnd.uniform(-0.30, 0.34)))
-            lf = bpy.context.object
-            lf.scale = (ll, ll * rnd.uniform(0.15, 0.26), 1)
-            lf.rotation_euler = (rnd.uniform(-1.2, 1.2), rnd.uniform(-1.0, 1.0), a + rnd.uniform(-0.7, 0.7))
+        # ciuffo alla punta del ramo: foglie piccole a ventaglio
+        tip = (math.cos(a) * bl * 0.62, math.sin(a) * bl * 0.62, z + bl * 0.58)
+        # Otto foglie per ciuffo, e piu' larghe: a 24 m di quota, dalla gru, un
+        # bambuseto vero e' una massa verde continua. Con cinque lame strette per
+        # ramo la chioma restava trasparente e i culmi leggevano come stecchi.
+        # Lame larghe coprono piu' pixel per triangolo: e' il rapporto migliore
+        # fra costo di render e resa.
+        for j in range(8):
+            ll = rnd.uniform(0.16, 0.34)
+            lf = cine.leaf_blade(f"Blade{k}{j}", ll, ll * rnd.uniform(0.20, 0.30),
+                                 bend=ll * rnd.uniform(0.28, 0.50), segments=3)
+            lf.location = (tip[0] + rnd.uniform(-0.16, 0.16),
+                           tip[1] + rnd.uniform(-0.16, 0.16),
+                           tip[2] + rnd.uniform(-0.18, 0.12))
+            lf.rotation_euler = (rnd.uniform(-0.9, 0.9), rnd.uniform(-1.3, -0.2),
+                                 a + rnd.uniform(-1.0, 1.0))
             cine.assign(lf, leaf_m)
             parts.append(lf)
     for o in parts:
         o.select_set(True)
     bpy.context.view_layer.objects.active = stem
     bpy.ops.object.join()
-    return bpy.context.object
+    joined = bpy.context.object
+    # Senza questo si contano i lati del cilindro: e' la correzione singola con
+    # piu' effetto su tutta la scena, e non costa un fotogramma in piu'.
+    # Soglia a 50 e non 34: gli anelli dei nodi hanno dieci lati, cioe' 36 fra una
+    # faccia e l'altra, e con la soglia a 34 restavano sfaccettati proprio nella
+    # macro. Gli spigoli veri (bordi degli anelli, 90) restano netti comunque.
+    cine.smooth_shade(joined, 50.0)
+    return joined
 
 
 # Variazione per singola pianta: senza questa i culmi condividono materiale
@@ -134,11 +164,11 @@ for m in MASTERS:
     m.location = (0, 600, 0)      # i master restano fuori campo
 
 
-def plant(master, x, y, scale, lean_deg, spin):
+def plant(master, x, y, scale, lean_deg, spin, linked=True):
     bpy.ops.object.select_all(action="DESELECT")
     master.select_set(True)
     bpy.context.view_layer.objects.active = master
-    bpy.ops.object.duplicate(linked=True)
+    bpy.ops.object.duplicate(linked=linked)
     c = bpy.context.object
     c.location = (x, y, 0.0)
     c.scale = (scale, scale, scale)
@@ -161,25 +191,51 @@ for r in range(15):
         m = MASTERS[(r * 7 + i) % 3]
         culms.append(plant(m, x, y, rnd.uniform(0.82, 1.26), rnd.uniform(0.6, 3.0), rnd.uniform(0, 6.28)))
 
-# Ciuffi molto fuori fuoco a 0.7-1.2 m dalla camera: bokeh vero in primo piano,
-# non lame nere che attraversano il fotogramma.
+# Ciuffi molto fuori fuoco a ~1 m dalla camera: bokeh vero in primo piano.
+#
+# Erano scritti ma disabilitati (range(0)), ed e' il motivo principale per cui
+# l'inquadratura non aveva profondita': tutto stava sullo stesso piano di fuoco,
+# e un bosco senza niente davanti all'obiettivo non e' un bosco ripreso, e' un
+# fondale. Con la lama lanceolata al posto del rettangolo non leggono piu' come
+# lame nere che attraversano il fotogramma — a f/2.2 e un metro di distanza sono
+# macchie morbide, che e' esattamente quello che fa un obiettivo vero.
 BOKEH = []
-for i in range(0):
-    bpy.ops.mesh.primitive_plane_add(size=1, location=(rnd.uniform(-0.9, 0.9), 0, rnd.uniform(1.1, 2.3)))
-    lf = bpy.context.object
-    lf.scale = (rnd.uniform(0.09, 0.19), rnd.uniform(0.035, 0.075), 1)
+for i in range(7):
+    ll = rnd.uniform(0.16, 0.34)
+    lf = cine.leaf_blade(f"Fg{i}", ll, ll * rnd.uniform(0.18, 0.30),
+                         bend=ll * 0.30, segments=4)
+    lf.location = (rnd.uniform(-0.9, 0.9), 0, rnd.uniform(1.05, 2.35))
     lf.rotation_euler = (rnd.uniform(-1.0, 1.0), rnd.uniform(-0.6, 0.6), rnd.uniform(0, 3.1))
     cine.assign(lf, leaf_m)
-    BOKEH.append((lf, rnd.uniform(1.10, 1.75), rnd.uniform(0, 6.28)))
+    BOKEH.append((lf, rnd.uniform(0.85, 1.55), rnd.uniform(0, 6.28)))
 
 # ---------------------------------------------------------------- culmo misurato (shot B)
 HERO_X, HERO_Y, HERO_Z = 0.72, 7.0, 1.46
-hero = plant(MASTERS[2], HERO_X, HERO_Y, 1.18, 0.8, 0.4)
+# Copia non collegata: nell'inquadratura B questo culmo occupa mezzo fotogramma a
+# 135 mm, e a quella distanza la superficie deve avere le striature verticali e i
+# difetti che sugli altri cinquecento culmi non si vedrebbero. Il bump costa il
+# 64% in piu' per fotogramma, quindi sta solo qui e non sul materiale condiviso.
+hero = plant(MASTERS[2], HERO_X, HERO_Y, 1.18, 0.8, 0.4, linked=False)
+culm_hero = cine.pbr_material("CulmHero", (0.150, 0.200, 0.090), roughness=0.52,
+                              specular=0.50, bump=0.045, tex_scale=30.0,
+                              stretch=(7.0, 7.0, 0.30))   # striature verticali
+for _slot in hero.material_slots:
+    if _slot.material in (culm_a, culm_b, culm_c):
+        _slot.material = culm_hero
+
+# Punti luce dietro l'eroe: a f/2.0 e 135 mm il fondo si scioglie, e senza alte
+# luci puntiformi si scioglie nel nulla. Queste diventano i cerchi di bokeh che
+# in una ripresa controluce ci sono sempre.
+BOKEH_LIGHTS = cine.add_motes((0.9, 13.0, 2.6), (9.0, 8.0, 3.4), count=46,
+                              radius=0.020, seed=11, color=(1.0, 0.93, 0.76),
+                              strength=5.5)
 R_HERO = 0.074 * 1.18
 bpy.ops.mesh.primitive_cylinder_add(radius=R_HERO * 1.30, depth=0.052,
                                     location=(HERO_X, HERO_Y, HERO_Z), vertices=28)
 bandg = bpy.context.object
 cine.assign(bandg, steel)
+cine.smooth_shade(bandg, 50.0)      # 28 lati: senza questo il cerchio e' un poligono
+cine.bevel_edges(bandg, width=0.0012, segments=2)
 for k in range(13):                       # tacche dendrometriche incise sulla fascetta
     a = math.radians(-96 + k * 16)
     bpy.ops.mesh.primitive_cube_add(size=1, location=(HERO_X + math.cos(a) * R_HERO * 1.32,
@@ -202,8 +258,12 @@ sun.data.shadow_cascade_count = 4
 sun.data.shadow_buffer_bias = 0.045
 # densita' molto piu' bassa della prima versione: i raggi si devono vedere, il
 # fondo no — a 0.075 la scena diventava un vuoto lattiginoso
-cine.add_fog_volume((0, 30, 2.6), (86, 130, 6.6), density=0.019, color=(0.66, 0.70, 0.72))
-cine.add_fog_volume((0, 30, 9.5), (86, 130, 13.0), density=0.005, color=(0.70, 0.74, 0.76))
+cine.add_fog_volume((0, 30, 2.6), (86, 130, 6.6), density=0.016, color=(0.66, 0.70, 0.72))
+# Il cubo alto era a 0.005 su 130 m di profondita': nell'inquadratura della gru la
+# camera guarda attraverso tutta quella colonna e il fotogramma diventava una
+# lastra marrone uniforme, senza verde e senza orizzonte. A 0.0030 la prospettiva
+# aerea si legge ancora ma la chioma resta verde.
+cine.add_fog_volume((0, 30, 9.5), (86, 130, 13.0), density=0.0020, color=(0.70, 0.74, 0.76))
 
 # Polline sospeso nei fasci di sole: e' il dettaglio che rende l'aria
 # visibile, e in un bosco controluce c'e' sempre.
@@ -258,6 +318,7 @@ def per_frame(f):
         c.rotation_euler.y = base * math.cos(f * 0.048 + i * 0.17)
     hero.rotation_euler.x = 0.004 * math.sin(f * 0.05)
     cine.drift_motes(POLLEN, f, amp=0.06, speed=0.018)
+    cine.drift_motes(BOKEH_LIGHTS, f, amp=0.10, speed=0.010)
 
     # ciuffi in primo piano: entrano ed escono di campo, danno parallasse vera
     in_macro = A_END < f <= B_END

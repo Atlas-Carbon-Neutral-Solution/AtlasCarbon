@@ -142,7 +142,7 @@ def lerp3(a, b, t):
 
 def pbr_material(name, base_rgb, roughness=0.5, metallic=0.0, specular=0.5,
                  emission_rgb=None, emission_strength=0.0,
-                 rough_break=0.11, bump=0.0, tex_scale=110.0):
+                 rough_break=0.11, bump=0.0, tex_scale=110.0, stretch=None):
     """Materiale PBR con micro-variazione di superficie.
 
     Perche' non una rugosita' costante: nessuna superficie reale ha la stessa
@@ -180,11 +180,22 @@ def pbr_material(name, base_rgb, roughness=0.5, metallic=0.0, specular=0.5,
         return mat
 
     coord = nt.nodes.new("ShaderNodeTexCoord")
+    src = coord.outputs["Object"]
+    if stretch is not None:
+        # Scala anisotropa delle coordinate: un rumore isotropo da' chiazze, ma
+        # certe superfici hanno una direzione — le striature verticali di un culmo
+        # di bambu', la satinatura di un metallo spazzolato. Comprimendo un asse e
+        # allungando gli altri lo stesso rumore diventa striatura.
+        mapn = nt.nodes.new("ShaderNodeMapping")
+        mapn.inputs["Scale"].default_value = stretch
+        nt.links.new(src, mapn.inputs["Vector"])
+        src = mapn.outputs["Vector"]
+
     noise = nt.nodes.new("ShaderNodeTexNoise")
     noise.inputs["Scale"].default_value = tex_scale
     noise.inputs["Detail"].default_value = 6.0
     noise.inputs["Roughness"].default_value = 0.55
-    nt.links.new(coord.outputs["Object"], noise.inputs["Vector"])
+    nt.links.new(src, noise.inputs["Vector"])
 
     if rough_break > 0:
         rng_node = nt.nodes.new("ShaderNodeMapRange")
@@ -197,7 +208,7 @@ def pbr_material(name, base_rgb, roughness=0.5, metallic=0.0, specular=0.5,
         fine = nt.nodes.new("ShaderNodeTexNoise")
         fine.inputs["Scale"].default_value = tex_scale * 3.5
         fine.inputs["Detail"].default_value = 4.0
-        nt.links.new(coord.outputs["Object"], fine.inputs["Vector"])
+        nt.links.new(src, fine.inputs["Vector"])
         bmp = nt.nodes.new("ShaderNodeBump")
         bmp.inputs["Strength"].default_value = bump
         bmp.inputs["Distance"].default_value = 0.02
@@ -216,6 +227,59 @@ def bevel_edges(obj, width=0.0025, segments=2):
     m.angle_limit = math.radians(35)
     m.harden_normals = False
     return m
+
+
+def smooth_shade(obj, angle_deg=34.0):
+    """Ombreggiatura liscia con angolo di soglia.
+
+    Un cilindro a dodici lati con ombreggiatura piatta mostra le sfaccettature, e
+    su un fusto vegetale e' il segnale piu' immediato che l'immagine e' generata:
+    si contano i lati. L'angolo di soglia tiene comunque netti gli spigoli veri —
+    gli anelli dei nodi, i bordi delle fascette — quindi non si perde definizione
+    dove serve. Costo nullo: e' un attributo delle normali, non geometria.
+    """
+    for p in obj.data.polygons:
+        p.use_smooth = True
+    if hasattr(obj.data, "use_auto_smooth"):        # Blender < 4.1
+        obj.data.use_auto_smooth = True
+        obj.data.auto_smooth_angle = math.radians(angle_deg)
+    return obj
+
+
+def leaf_blade(name, length, width, bend=0.18, segments=4, keel=0.20):
+    """Foglia lanceolata con nervatura, come mesh costruita a mano.
+
+    Un rettangolo piatto non e' una foglia: una foglia si assottiglia alle due
+    estremita', ha la larghezza massima a circa un terzo, non e' planare e ha una
+    nervatura centrale rilevata che le fa prendere due luci diverse sulle due
+    meta'. Con centinaia di foglie in campo la differenza fra le due cose e'
+    la ragione principale per cui una chioma sintetica si riconosce a colpo
+    d'occhio: i rettangoli leggono come detriti, non come fogliame.
+
+    La lama si sviluppa lungo +X (come le scale dei piani che sostituisce, cosi'
+    le rotazioni esistenti restano valide), larghezza lungo Y, con una piega
+    verso il basso proporzionale al quadrato della distanza dal picciolo.
+    Tre file di vertici per `segments` quadrilateri: poche facce, profilo giusto.
+    """
+    verts, faces = [], []
+    for i in range(segments + 1):
+        t = i / segments
+        # profilo lanceolato: 0 alle estremita', massimo intorno a t=1/3
+        w = width * math.sin(math.pi * (t ** 0.55))
+        z = -bend * (t ** 2)
+        x = (t - 0.12) * length          # il picciolo sporge un po' indietro
+        base = len(verts)
+        verts.extend([(x, -w, z), (x, 0.0, z + w * keel), (x, w, z)])
+        if i:
+            faces.append((base - 3, base, base + 1, base - 2))
+            faces.append((base - 2, base + 1, base + 2, base - 1))
+    mesh = bpy.data.meshes.new(name)
+    mesh.from_pydata(verts, [], faces)
+    mesh.update()
+    obj = bpy.data.objects.new(name, mesh)
+    bpy.context.collection.objects.link(obj)
+    smooth_shade(obj, 60.0)              # soglia alta: la nervatura resta morbida
+    return obj
 
 
 def add_motes(center, size, count=90, radius=0.0035, seed=0,
