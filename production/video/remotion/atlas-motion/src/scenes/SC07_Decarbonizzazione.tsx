@@ -1,4 +1,5 @@
 import { staticFile } from "remotion";
+import { SC07_SRC } from "../footage";
 import { CineVideo, SceneShell, TimedCaption } from "../shared";
 import { VO } from "../vo";
 
@@ -9,12 +10,16 @@ import { VO } from "../vo";
 // regolari — è una coltura, non un idillio spontaneo (§5). Carrellata fra i
 // culmi, macro sulla fascetta dendrometrica, gru che scopre le file.
 // Sorgente: production/video/blender/sc07_bamboo.py
+//
+// La sorgente è dichiarata in ../footage.ts, non qui: è il punto di sostituzione
+// per una ripresa reale, che in questo ambiente non è scaricabile (egress negato
+// dalla policy) e comunque va licenziata prima della pubblicazione.
 
 
 export const SC07_Decarbonizzazione: React.FC = () => {
   return (
     <SceneShell bg="#0a0f0a">
-      <CineVideo src={staticFile("video/sc07-bamboo.mp4")} halation={0.19} saturate={0.86} />
+      <CineVideo src={staticFile(SC07_SRC)} halation={0.19} saturate={0.86} />
       <TimedCaption cues={VO.SC07} />
     </SceneShell>
   );

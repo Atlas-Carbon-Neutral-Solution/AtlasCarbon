@@ -3,8 +3,16 @@
 # ospita. Un clip più corto della sua sequenza fa congelare l'ultimo fotogramma
 # (è il difetto che ha prodotto il "3D che si blocca sul niente" in SC05).
 set -uo pipefail
-cd "$(dirname "$0")/remotion/atlas-motion/public/video"
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT/remotion/atlas-motion/public/video"
 fail=0
+
+# SC07 può essere sostituita da una ripresa reale: il nome del file sta in
+# src/footage.ts, quindi lo si legge da lì invece di fissarlo qui — così il
+# controllo sul congelamento dell'ultimo fotogramma vale anche dopo lo scambio.
+SC07=$(sed -n 's/^export const SC07_SRC = "video\/\(.*\)";$/\1/p' \
+       "$ROOT/remotion/atlas-motion/src/footage.ts")
+[ -n "$SC07" ] || { echo "non riesco a leggere SC07_SRC da src/footage.ts"; exit 1; }
 check() {
   local file="$1" expected="$2"
   if [ ! -f "$file" ]; then echo "MANCA   $file (attesi $expected frame)"; fail=1; return; fi
@@ -23,5 +31,5 @@ check sc05a-sensor.mp4 125
 check sc05b-orbit.mp4  150
 check sc05c-ledger.mp4 125
 check sc06-thermal.mp4 300
-check sc07-bamboo.mp4  350
+check "$SC07"          350
 exit $fail
