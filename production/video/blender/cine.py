@@ -140,10 +140,27 @@ def lerp3(a, b, t):
     return tuple(a[i] + (b[i] - a[i]) * t for i in range(3))
 
 
-def pbr_material(name, base_rgb, roughness=0.5, metallic=0.0, specular=0.5, emission_rgb=None, emission_strength=0.0):
+def pbr_material(name, base_rgb, roughness=0.5, metallic=0.0, specular=0.5,
+                 emission_rgb=None, emission_strength=0.0,
+                 rough_break=0.11, bump=0.0, tex_scale=110.0):
+    """Materiale PBR con micro-variazione di superficie.
+
+    Perche' non una rugosita' costante: nessuna superficie reale ha la stessa
+    rugosita' su tutta la sua estensione, e un valore uniforme e' uno degli
+    indizi piu' immediati che un'immagine e' sintetica — i riflessi risultano
+    tutti identici e la luce non "trova" niente sul materiale. Qui un rumore
+    procedurale in coordinate oggetto modula la rugosita' entro +/- rough_break e
+    aggiunge un bump minimo, cosi' le alte luci si rompono come su un oggetto
+    vero. Costa un nodo di rumore per materiale, trascurabile rispetto a ombre e
+    volumetriche.
+
+    I materiali emissivi (mappe termiche, LED, saldature) restano puliti: li'
+    la superficie deve leggersi come irraggiamento uniforme, non come oggetto.
+    """
     mat = bpy.data.materials.new(name)
     mat.use_nodes = True
-    bsdf = mat.node_tree.nodes.get("Principled BSDF")
+    nt = mat.node_tree
+    bsdf = nt.nodes.get("Principled BSDF")
     bsdf.inputs["Base Color"].default_value = (*base_rgb, 1.0)
     bsdf.inputs["Roughness"].default_value = roughness
     bsdf.inputs["Metallic"].default_value = metallic
@@ -157,7 +174,86 @@ def pbr_material(name, base_rgb, roughness=0.5, metallic=0.0, specular=0.5, emis
         elif "Emission" in bsdf.inputs:
             bsdf.inputs["Emission"].default_value = (*emission_rgb, 1.0)
         bsdf.inputs["Emission Strength"].default_value = emission_strength
+        return mat
+
+    if rough_break <= 0 and bump <= 0:
+        return mat
+
+    coord = nt.nodes.new("ShaderNodeTexCoord")
+    noise = nt.nodes.new("ShaderNodeTexNoise")
+    noise.inputs["Scale"].default_value = tex_scale
+    noise.inputs["Detail"].default_value = 6.0
+    noise.inputs["Roughness"].default_value = 0.55
+    nt.links.new(coord.outputs["Object"], noise.inputs["Vector"])
+
+    if rough_break > 0:
+        rng_node = nt.nodes.new("ShaderNodeMapRange")
+        rng_node.inputs["To Min"].default_value = max(0.02, roughness - rough_break)
+        rng_node.inputs["To Max"].default_value = min(1.0, roughness + rough_break)
+        nt.links.new(noise.outputs["Fac"], rng_node.inputs["Value"])
+        nt.links.new(rng_node.outputs["Result"], bsdf.inputs["Roughness"])
+
+    if bump > 0:
+        fine = nt.nodes.new("ShaderNodeTexNoise")
+        fine.inputs["Scale"].default_value = tex_scale * 3.5
+        fine.inputs["Detail"].default_value = 4.0
+        nt.links.new(coord.outputs["Object"], fine.inputs["Vector"])
+        bmp = nt.nodes.new("ShaderNodeBump")
+        bmp.inputs["Strength"].default_value = bump
+        bmp.inputs["Distance"].default_value = 0.02
+        nt.links.new(fine.outputs["Fac"], bmp.inputs["Height"])
+        nt.links.new(bmp.outputs["Normal"], bsdf.inputs["Normal"])
     return mat
+
+
+def bevel_edges(obj, width=0.0025, segments=2):
+    """Smusso sugli spigoli: uno spigolo matematicamente perfetto non esiste, e
+    non prende luce. Un filo di bevel accende gli spigoli e da' solidita'."""
+    m = obj.modifiers.new("Bevel", "BEVEL")
+    m.width = width
+    m.segments = segments
+    m.limit_method = "ANGLE"
+    m.angle_limit = math.radians(35)
+    m.harden_normals = False
+    return m
+
+
+def add_motes(center, size, count=90, radius=0.0035, seed=0,
+              color=(0.85, 0.88, 0.92), strength=1.6):
+    """Particelle sospese nell'aria: polvere negli interni, polline nei fasci di
+    luce. Sono piccolissime sfere emissive — in un ambiente illuminato di taglio
+    e' il dettaglio che dice "questa e' aria, non vuoto". Restituisce la lista,
+    cosi' la scena puo' farle derivare lentamente."""
+    import random as _random
+    rnd = _random.Random(1000 + seed)
+    mat = bpy.data.materials.new(f"Mote{seed}")
+    mat.use_nodes = True
+    b = mat.node_tree.nodes.get("Principled BSDF")
+    b.inputs["Base Color"].default_value = (*color, 1.0)
+    if "Emission Color" in b.inputs:
+        b.inputs["Emission Color"].default_value = (*color, 1.0)
+    elif "Emission" in b.inputs:
+        b.inputs["Emission"].default_value = (*color, 1.0)
+    b.inputs["Emission Strength"].default_value = strength
+    out = []
+    for i in range(count):
+        p = (center[0] + rnd.uniform(-size[0], size[0]) / 2,
+             center[1] + rnd.uniform(-size[1], size[1]) / 2,
+             center[2] + rnd.uniform(-size[2], size[2]) / 2)
+        bpy.ops.mesh.primitive_ico_sphere_add(radius=radius * rnd.uniform(0.5, 1.6),
+                                              subdivisions=1, location=p)
+        o = bpy.context.object
+        assign(o, mat)
+        out.append((o, p, rnd.uniform(0, 6.28)))
+    return out
+
+
+def drift_motes(motes, f, amp=0.02, speed=0.012):
+    """Deriva lentissima delle particelle: in aria niente sta fermo."""
+    for o, p, ph in motes:
+        o.location = (p[0] + amp * math.sin(f * speed + ph),
+                      p[1] + amp * 0.7 * math.sin(f * speed * 0.8 + ph * 1.7),
+                      p[2] + amp * 0.5 * math.sin(f * speed * 1.3 + ph * 0.6) + f * speed * 0.004)
 
 
 def assign(obj, mat):
@@ -261,3 +357,32 @@ def parse_argv(argv):
         if a.startswith("only="):
             only = [int(v) for v in a.split("=", 1)[1].split(",") if v]
     return out_dir, n_frames, res_x, res_y, only
+
+
+def per_object_variation(mat, value=0.16, hue=0.03):
+    """Variazione di colore per singola copia dell'oggetto.
+
+    Serve ai duplicati collegati (i culmi di bambu', i blocchi del registro):
+    condividono la stessa mesh e lo stesso materiale, quindi senza questo sono
+    tutti esattamente dello stesso colore — ed e' l'indizio piu' forte che una
+    popolazione e' generata. `Object Info > Random` da' un numero diverso per
+    ogni istanza, senza rompere il collegamento e senza costo di memoria.
+    """
+    nt = mat.node_tree
+    bsdf = nt.nodes.get("Principled BSDF")
+    base = bsdf.inputs["Base Color"].default_value
+    info = nt.nodes.new("ShaderNodeObjectInfo")
+    hsv = nt.nodes.new("ShaderNodeHueSaturation")
+    hsv.inputs["Color"].default_value = base
+    rng_v = nt.nodes.new("ShaderNodeMapRange")
+    rng_v.inputs["To Min"].default_value = 1.0 - value
+    rng_v.inputs["To Max"].default_value = 1.0 + value
+    rng_h = nt.nodes.new("ShaderNodeMapRange")
+    rng_h.inputs["To Min"].default_value = 0.5 - hue
+    rng_h.inputs["To Max"].default_value = 0.5 + hue
+    nt.links.new(info.outputs["Random"], rng_v.inputs["Value"])
+    nt.links.new(info.outputs["Random"], rng_h.inputs["Value"])
+    nt.links.new(rng_v.outputs["Result"], hsv.inputs["Value"])
+    nt.links.new(rng_h.outputs["Result"], hsv.inputs["Hue"])
+    nt.links.new(hsv.outputs["Color"], bsdf.inputs["Base Color"])
+    return mat

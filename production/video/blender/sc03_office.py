@@ -144,6 +144,11 @@ cine.add_area_light((-2.6, -0.9, 1.7), (55, 0, -40), energy=9, size=3.0, color=(
 # un velo di foschia perche' il fascio della veneziana si veda nell'aria
 cine.add_fog_volume((-0.6, 0.2, 0.9), (4.6, 3.4, 2.2), density=0.028, color=(0.62, 0.72, 0.92))
 
+# polvere nel fascio della veneziana: senza particelle il fascio e' un
+# gradiente, con le particelle e' aria
+DUST = cine.add_motes((-0.7, 0.35, 0.95), (2.6, 2.0, 1.5), count=140,
+                      radius=0.0028, seed=3, color=(0.80, 0.86, 0.96), strength=1.5)
+
 # --- camera: due inquadrature, stacco netto a meta' scena
 cam = cine.add_camera((-0.45, -1.15, 0.62), (80, 0, 0), lens=35.0, focus_distance=2.10, fstop=2.4)
 
@@ -170,6 +175,8 @@ def animate(f):
         cam.data.lens = 28.0
         cam.data.dof.focus_distance = 3.10
         cam.data.dof.aperture_fstop = 4.0
+
+    cine.drift_motes(DUST, f, amp=0.02, speed=0.016)
 
     # scroll delle righe sullo schermo (rapido, illeggibile)
     PERIOD, HALF = 0.68, 0.34

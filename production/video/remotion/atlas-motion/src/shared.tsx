@@ -62,7 +62,11 @@ export const CineVideo: React.FC<{
         src={src}
         style={{
           ...COVER,
-          filter: "blur(26px) brightness(1.55) saturate(1.4)",
+          // la scala 1.006 e la virata calda su questo strato producono una
+          // frangia ai bordi che legge come aberrazione cromatica, senza
+          // pagare un terzo decode del video
+          transform: "scale(1.006)",
+          filter: "blur(26px) brightness(1.55) saturate(1.4) hue-rotate(-9deg)",
           mixBlendMode: "screen",
           opacity: halation,
         }}
@@ -274,5 +278,126 @@ export const TimedCaption: React.FC<{
       align={align}
       startFrame={active.from}
     />
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Transizioni fra scene.
+//
+// Prima il montaggio era tutto a stacco secco: corretto per gli stacchi INTERNI
+// alle scene (li' e' una figura retorica voluta, §5), ma fra scene diverse
+// nove tagli identici appiattiscono il ritmo. Qui ogni passaggio ha una figura
+// scelta in base al salto narrativo:
+//
+//   whip      panoramica sfocata: salto geografico (scrivania -> impianto)
+//   punch     spinta dentro l'inquadratura: aumento di pressione
+//   flash     lampo di luce: il cambio di fronte (entra Atlas)
+//   dissolve  dissolvenza: passaggio morbido (industria -> natura, e l'endcard)
+//
+// Il whip in uscita da una scena e quello in entrata nella successiva si
+// leggono come un unico movimento attraverso il taglio, perche' <Series> mette
+// le scene esattamente una dopo l'altra.
+export type TKind = "cut" | "whip" | "punch" | "flash" | "dissolve";
+
+const WHIP = 7;
+const PUNCH = 11;
+const DISSOLVE = 13;
+const FLASH = 6;
+
+export const SceneTransition: React.FC<{
+  duration: number;
+  inKind?: TKind;
+  outKind?: TKind;
+  children: React.ReactNode;
+}> = ({ duration, inKind = "cut", outKind = "cut", children }) => {
+  const frame = useCurrentFrame();
+  let tx = 0;
+  let scale = 1;
+  let blur = 0;
+  let opacity = 1;
+  let flash = 0;
+
+  // ingresso
+  if (inKind === "whip") {
+    const p = easeInOut(frame, 0, WHIP);
+    tx += (1 - p) * 150;
+    blur += (1 - p) * 20;
+  } else if (inKind === "punch") {
+    const p = easeInOut(frame, 0, PUNCH);
+    scale *= 1.075 - p * 0.075;
+    blur += (1 - p) * 4;
+  } else if (inKind === "dissolve") {
+    opacity *= easeInOut(frame, 0, DISSOLVE);
+  } else if (inKind === "flash") {
+    flash = Math.max(flash, 1 - easeInOut(frame, 0, FLASH));
+  }
+
+  // uscita
+  const outStart = duration - WHIP;
+  if (outKind === "whip") {
+    const p = easeInOut(frame, outStart, WHIP);
+    tx -= p * 150;
+    blur += p * 20;
+  } else if (outKind === "punch") {
+    const p = easeInOut(frame, duration - PUNCH, PUNCH);
+    scale *= 1 + p * 0.05;
+    blur += p * 3;
+  } else if (outKind === "dissolve") {
+    opacity *= 1 - easeInOut(frame, duration - DISSOLVE, DISSOLVE);
+  } else if (outKind === "flash") {
+    flash = Math.max(flash, easeInOut(frame, duration - FLASH, FLASH));
+  }
+
+  return (
+    <div style={{ position: "absolute", inset: 0, overflow: "hidden", opacity }}>
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          transform: `translateX(${tx}px) scale(${scale})`,
+          filter: blur > 0.01 ? `blur(${blur}px)` : undefined,
+        }}
+      >
+        {children}
+      </div>
+      {flash > 0.001 && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "radial-gradient(ellipse at 62% 42%, rgba(255,238,214,1) 0%, rgba(255,226,190,0.75) 38%, rgba(255,214,170,0) 78%)",
+            mixBlendMode: "screen",
+            opacity: flash * 0.9,
+            pointerEvents: "none",
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Artefatti di macchina: instabilita' del passo pellicola e micro-variazione di
+// esposizione. Sono minuscoli — mezzo pixel e sei millesimi di stop — ma sono
+// esattamente quello che manca a un render per non sembrare "troppo pulito":
+// nessuna camera reale tiene il fotogramma perfettamente immobile ne'
+// l'esposizione perfettamente costante.
+export const LensArtifacts: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const frame = useCurrentFrame();
+  const wx = Math.sin(frame * 0.37) * 0.30 + Math.sin(frame * 1.13 + 1.7) * 0.22;
+  const wy = Math.sin(frame * 0.29 + 0.8) * 0.26 + Math.sin(frame * 0.91) * 0.18;
+  const exposure = 1 + Math.sin(frame * 0.53) * 0.0035 + Math.sin(frame * 1.7 + 2.1) * 0.0022;
+  return (
+    <div
+      style={{
+        position: "absolute",
+        inset: 0,
+        transform: `translate(${wx}px, ${wy}px)`,
+        filter: `brightness(${exposure})`,
+      }}
+    >
+      {children}
+    </div>
   );
 };

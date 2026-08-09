@@ -42,7 +42,7 @@ cine.assign(wall, cine.pbr_material("Wall", (0.034, 0.037, 0.042), roughness=0.8
 bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, TH / 2))
 pages = bpy.context.object
 pages.scale = (W * 2, D * 2, TH)
-cine.assign(pages, cine.pbr_material("Pages", (0.235, 0.233, 0.226), roughness=0.34, specular=0.58))
+cine.assign(pages, cine.pbr_material("Pages", (0.235, 0.233, 0.226), roughness=0.34, specular=0.58, bump=0.022))
 
 # --- copertina: l'ORIGINE dell'oggetto e' la cerniera sul bordo lontano (+Y).
 # Sposto i vertici in local space invece di usare un parent: cosi' la rotazione
@@ -56,7 +56,10 @@ for v in cover.data.vertices:
     v.co.y -= D  # la mesh si estende da y=-2D a y=0 rispetto all'origine
 COVER_Z = TH + 0.010
 cover.location = (0, D, COVER_Z)
-cine.assign(cover, cine.pbr_material("Cover", (0.052, 0.056, 0.062), roughness=0.09, specular=1.0))
+cine.assign(cover, cine.pbr_material("Cover", (0.052, 0.056, 0.062), roughness=0.09,
+                                    specular=1.0, bump=0.016))
+cine.bevel_edges(cover, width=0.0018)
+cine.bevel_edges(pages, width=0.0022)
 hinge = cover  # la copertina stessa e' la cerniera
 
 # --- grafica in rilievo SULLA PAGINA (astratta, nessun testo leggibile)
@@ -126,6 +129,10 @@ clip.scale = (1.0, 0.42, 1.0)
 clip.rotation_euler = (0, 0, math.radians(-18))
 cine.assign(clip, steel_mat)
 
+# polvere in sospensione sopra la scrivania, nel fascio della radente
+DUST = cine.add_motes((0.1, -0.15, 0.22), (1.9, 1.5, 0.42), count=110,
+                      radius=0.0022, seed=1, strength=1.2)
+
 # --- luci: radente calda principale, fill freddo, rim
 key = cine.add_area_light((-1.9, -1.15, 0.30), (85, 0, -62), energy=62, size=0.55, color=(1.0, 0.93, 0.84))
 cine.add_area_light((2.8, 2.4, 2.2), (48, 0, 148), energy=52, size=4.2, color=(0.70, 0.79, 0.93))
@@ -173,6 +180,7 @@ def animate(f):
         cam.data.dof.aperture_fstop = 2.8
         key.location.x = -1.35 + t * 0.5
 
+    cine.drift_motes(DUST, f, amp=0.012, speed=0.02)
     dx, dy, dz = handheld(f, 1.0 if f <= CUT else 1.4)
     cam.location = (cam.location[0] + dx, cam.location[1] + dy, cam.location[2] + dz)
 

@@ -120,6 +120,11 @@ def build_master_culm(height, radius, mat):
     return bpy.context.object
 
 
+# Variazione per singola pianta: senza questa i culmi condividono materiale
+# (sono duplicati collegati) e risultano tutti dello stesso verde.
+for _m in (culm_a, culm_b, culm_c, leaf_m, node_m):
+    cine.per_object_variation(_m, value=0.20, hue=0.035)
+
 MASTERS = [
     build_master_culm(13.5, 0.066, culm_a),
     build_master_culm(11.0, 0.058, culm_b),
@@ -200,6 +205,12 @@ sun.data.shadow_buffer_bias = 0.045
 cine.add_fog_volume((0, 30, 2.6), (86, 130, 6.6), density=0.019, color=(0.66, 0.70, 0.72))
 cine.add_fog_volume((0, 30, 9.5), (86, 130, 13.0), density=0.005, color=(0.70, 0.74, 0.76))
 
+# Polline sospeso nei fasci di sole: e' il dettaglio che rende l'aria
+# visibile, e in un bosco controluce c'e' sempre.
+POLLEN = cine.add_motes((0.4, 12.0, 3.2), (14.0, 26.0, 5.0), count=150,
+                        radius=0.010, seed=7, color=(0.92, 0.90, 0.78),
+                        strength=2.4)
+
 # ---------------------------------------------------------------- camera
 cam = cine.add_camera((0, -6.0, 1.75), (0, 0, 0), lens=35.0, focus_distance=8.0, fstop=2.2)
 
@@ -246,6 +257,7 @@ def per_frame(f):
         c.rotation_euler.x = base * math.sin(f * 0.055 + i * 0.31)
         c.rotation_euler.y = base * math.cos(f * 0.048 + i * 0.17)
     hero.rotation_euler.x = 0.004 * math.sin(f * 0.05)
+    cine.drift_motes(POLLEN, f, amp=0.06, speed=0.018)
 
     # ciuffi in primo piano: entrano ed escono di campo, danno parallasse vera
     in_macro = A_END < f <= B_END

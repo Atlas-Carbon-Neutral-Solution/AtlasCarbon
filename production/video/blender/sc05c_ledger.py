@@ -38,7 +38,8 @@ _ee.use_soft_shadows = False
 AZZURRO = (0.325, 0.643, 0.859)   # #53a4db — V01
 
 deck = cine.pbr_material("Deck", (0.028, 0.030, 0.034), roughness=0.34, specular=0.62)
-steel = cine.pbr_material("Steel", (0.155, 0.163, 0.174), roughness=0.44, metallic=0.28)
+steel = cine.pbr_material("Steel", (0.155, 0.163, 0.174), roughness=0.44, metallic=0.28,
+                          bump=0.020)
 steel_top = cine.pbr_material("SteelTop", (0.205, 0.215, 0.228), roughness=0.32, metallic=0.35)
 edge = cine.pbr_material("Edge", (0.098, 0.103, 0.110), roughness=0.52, metallic=0.30)
 seam = cine.pbr_material("Seam", AZZURRO, roughness=0.30,
@@ -73,6 +74,11 @@ for i in range(N):
         sm = box((x - (BW + GAP) / 2, 0, BH * 0.5), (GAP * 0.85, BD * 0.86, BH * 0.80), seam)
         sm.scale = (GAP * 0.85, BD * 0.86, 0.0001)
         SEAMS.append(sm)
+
+# ogni blocco ha una sfumatura leggermente diversa: sono duplicati con la
+# stessa mesh, e senza variazione risultano stampati in serie
+cine.per_object_variation(steel, value=0.10, hue=0.012)
+cine.per_object_variation(steel_top, value=0.08, hue=0.010)
 
 # ---------------------------------------------------------------- luce
 key = cine.add_area_light((-3.6, -4.4, 4.6), (48, 0, -34), energy=1500, size=3.0,

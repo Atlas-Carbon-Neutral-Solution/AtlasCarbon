@@ -1,5 +1,5 @@
 import { AbsoluteFill, Composition, Series } from "remotion";
-import { Anamorphic, LogoWatermark } from "./shared";
+import { Anamorphic, LensArtifacts, SceneTransition, LogoWatermark } from "./shared";
 import { SC01_Apertura } from "./scenes/SC01_Apertura";
 import { SC02_StaccoReale } from "./scenes/SC02_StaccoReale";
 import { SC03_Pressione } from "./scenes/SC03_Pressione";
@@ -40,35 +40,58 @@ if (SC05_TOTAL !== DURATIONS.SC05) {
 export const AtlasMaster90: React.FC = () => {
   return (
     <AbsoluteFill>
+      <LensArtifacts>
+      {/* Figure di transizione scelte sul salto narrativo — v. SceneTransition */}
       <Series>
         <Series.Sequence durationInFrames={DURATIONS.SC01}>
-          <SC01_Apertura />
+          <SceneTransition duration={DURATIONS.SC01} outKind="whip">
+            <SC01_Apertura />
+          </SceneTransition>
         </Series.Sequence>
         <Series.Sequence durationInFrames={DURATIONS.SC02}>
-          <SC02_StaccoReale />
+          <SceneTransition duration={DURATIONS.SC02} inKind="whip" outKind="punch">
+            <SC02_StaccoReale />
+          </SceneTransition>
         </Series.Sequence>
         <Series.Sequence durationInFrames={DURATIONS.SC03}>
-          <SC03_Pressione />
+          <SceneTransition duration={DURATIONS.SC03} inKind="punch" outKind="whip">
+            <SC03_Pressione />
+          </SceneTransition>
         </Series.Sequence>
         <Series.Sequence durationInFrames={DURATIONS.SC04}>
-          <SC04_Approssimazione />
+          <SceneTransition duration={DURATIONS.SC04} inKind="whip" outKind="flash">
+            <SC04_Approssimazione />
+          </SceneTransition>
         </Series.Sequence>
         <Series.Sequence durationInFrames={DURATIONS.SC05}>
-          <SC05_IngressoAtlas />
+          {/* il lampo in entrata e' il cambio di fronte: entra Atlas */}
+          <SceneTransition duration={DURATIONS.SC05} inKind="flash" outKind="punch">
+            <SC05_IngressoAtlas />
+          </SceneTransition>
         </Series.Sequence>
         <Series.Sequence durationInFrames={DURATIONS.SC06}>
-          <SC06_Efficientamento />
+          <SceneTransition duration={DURATIONS.SC06} inKind="punch" outKind="dissolve">
+            <SC06_Efficientamento />
+          </SceneTransition>
         </Series.Sequence>
         <Series.Sequence durationInFrames={DURATIONS.SC07}>
-          <SC07_Decarbonizzazione />
+          {/* industria -> natura: l'unico passaggio morbido del montaggio */}
+          <SceneTransition duration={DURATIONS.SC07} inKind="dissolve" outKind="dissolve">
+            <SC07_Decarbonizzazione />
+          </SceneTransition>
         </Series.Sequence>
         <Series.Sequence durationInFrames={DURATIONS.SC08}>
-          <SC08_Proof />
+          <SceneTransition duration={DURATIONS.SC08} inKind="dissolve" outKind="flash">
+            <SC08_Proof />
+          </SceneTransition>
         </Series.Sequence>
         <Series.Sequence durationInFrames={DURATIONS.SC09}>
-          <SC09_Endcard />
+          <SceneTransition duration={DURATIONS.SC09} inKind="flash">
+            <SC09_Endcard />
+          </SceneTransition>
         </Series.Sequence>
       </Series>
+      </LensArtifacts>
       <LogoWatermark totalFrames={TOTAL_FRAMES} />
       <Anamorphic />
     </AbsoluteFill>

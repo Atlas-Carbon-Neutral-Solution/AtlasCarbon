@@ -33,8 +33,10 @@ _ee.use_soft_shadows = False
 
 
 AZZURRO = (0.325, 0.643, 0.859)   # #53a4db — V01
-pipe_m = cine.pbr_material("Pipe", (0.132, 0.138, 0.146), roughness=0.38, metallic=0.85)
-body_m = cine.pbr_material("Body", (0.098, 0.102, 0.108), roughness=0.44, specular=0.55)
+pipe_m = cine.pbr_material("Pipe", (0.132, 0.138, 0.146), roughness=0.38, metallic=0.85,
+                           bump=0.020)
+body_m = cine.pbr_material("Body", (0.098, 0.102, 0.108), roughness=0.44, specular=0.55,
+                           bump=0.026)
 face_m = cine.pbr_material("Face", (0.055, 0.058, 0.062), roughness=0.22, specular=0.75)
 steel = cine.pbr_material("Steel", (0.300, 0.315, 0.330), roughness=0.30, metallic=0.92)
 cable_m = cine.pbr_material("Cable", (0.042, 0.045, 0.050), roughness=0.72)

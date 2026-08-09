@@ -139,6 +139,10 @@ cine.add_area_light((-2.0, -1.0, 3.2), (28, 0, -20), energy=30, size=5.0, color=
 torch = cine.add_spot((1.9, -1.5, 1.55), (74, 0, 34), energy=900, spot_size_deg=52, blend=0.55,
                       color=(1.0, 0.93, 0.80))
 
+# polvere e particolato nel fascio della torcia
+DUST = cine.add_motes((0.2, 0.6, 1.4), (3.4, 1.8, 1.6), count=130,
+                      radius=0.0032, seed=4, color=(0.94, 0.86, 0.72), strength=2.0)
+
 # --- camera: A sul contatore, B sulla valvola col vapore
 cam = cine.add_camera((-1.52, -0.05, 1.235), (87, 0, -1), lens=45.0, focus_distance=1.42, fstop=2.2)
 
@@ -158,6 +162,7 @@ def handheld(f, amp=1.0):
 
 
 def animate(f):
+    cine.drift_motes(DUST, f, amp=0.03, speed=0.024)
     for i, txt in enumerate(digits):
         txt.data.body = digit_at(f, i)
 

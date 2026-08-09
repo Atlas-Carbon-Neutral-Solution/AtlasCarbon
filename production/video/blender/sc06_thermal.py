@@ -41,8 +41,10 @@ _ee.use_soft_shadows = False
 
 # ---------------------------------------------------------------- materiali
 wall = cine.pbr_material("Wall", (0.088, 0.092, 0.098), roughness=0.90, specular=0.22)
-pipe_m = cine.pbr_material("Pipe", (0.150, 0.155, 0.162), roughness=0.46, metallic=0.80)
-clad = cine.pbr_material("Clad", (0.330, 0.345, 0.360), roughness=0.30, metallic=0.92)
+pipe_m = cine.pbr_material("Pipe", (0.150, 0.155, 0.162), roughness=0.46, metallic=0.80,
+                           bump=0.018)
+clad = cine.pbr_material("Clad", (0.330, 0.345, 0.360), roughness=0.30, metallic=0.92,
+                         bump=0.024)
 bare = cine.pbr_material("Bare", (0.128, 0.108, 0.082), roughness=0.78, specular=0.30)
 wheel_m = cine.pbr_material("Wheel", (0.185, 0.062, 0.048), roughness=0.62)
 bolt_m = cine.pbr_material("Bolt", (0.095, 0.100, 0.106), roughness=0.52, metallic=0.70)
@@ -159,6 +161,10 @@ rim = cine.add_spot((1.4, 1.6, 2.7), (128, 0, 14), energy=340, spot_size_deg=58,
                     color=(0.86, 0.92, 1.0))
 cine.add_fog_volume((0, -0.4, 1.5), (9.0, 5.0, 4.0), density=0.020, color=(0.60, 0.64, 0.70))
 
+# polvere: la scena A e' illuminata di taglio, e si deve vedere l'aria
+DUST = cine.add_motes((-0.4, -0.6, 1.5), (4.2, 2.2, 1.8), count=120,
+                      radius=0.0026, seed=6, strength=1.3)
+
 # ---------------------------------------------------------------- camera: FISSA fra A e B
 CAM_AT = (-1.02, -4.30, 1.62)
 CAM_LOOK = (-0.40, 0.55, 1.32)
@@ -223,6 +229,7 @@ def lights(on):
 
 
 def per_frame(f):
+    cine.drift_motes(DUST, f, amp=0.02, speed=0.018)
     if f <= A_END:
         set_thermal(False)
         lights(True)

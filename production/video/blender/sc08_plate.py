@@ -26,7 +26,8 @@ cine.setup_eevee(RES_X, RES_Y, samples=64, bloom=True,
                  world_rgb=(0.008, 0.009, 0.011), volumetrics=True, vol_end=22.0)
 bpy.context.scene.eevee.bloom_intensity = 0.030
 
-steel = cine.pbr_material("Steel", (0.072, 0.077, 0.083), roughness=0.44, metallic=0.40)
+steel = cine.pbr_material("Steel", (0.072, 0.077, 0.083), roughness=0.44, metallic=0.40,
+                          bump=0.030)
 mill = cine.pbr_material("Mill", (0.092, 0.098, 0.106), roughness=0.30, metallic=0.50)
 floor = cine.pbr_material("Floor", (0.014, 0.015, 0.018), roughness=0.40, specular=0.58)
 edge = cine.pbr_material("Edge", (0.078, 0.082, 0.088), roughness=0.55, metallic=0.35)
@@ -47,6 +48,7 @@ box((0, 2.4, 1.35), (16.0, 0.30, 5.0), wall)                  # parete di fondo
 
 # piastra principale, leggermente ruotata: nessun allineamento perfetto
 plate = box((0.35, 0.0, 0.42), (3.60, 2.30, 0.16), steel, rot=(0, 0, -4.0))
+cine.bevel_edges(plate, width=0.010, segments=3)
 box((0.35, 0.0, 0.505), (3.44, 2.16, 0.008), mill, rot=(0, 0, -4.0))
 for i in range(22):                                            # solchi di fresatura
     box((-1.30 + i * 0.155, 0.0, 0.508), (0.012, 2.10, 0.004), edge, rot=(0, 0, -4.0))
