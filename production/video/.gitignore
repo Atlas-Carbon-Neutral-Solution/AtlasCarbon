@@ -1,1 +1,4 @@
 output/atlas_master_90_silent.mp4
+
+# anteprima compressa: rigenerabile dal master con rebuild_v4.sh (passo 4/4)
+output/atlas_master_90_preview.mp4
