@@ -1,5 +1,14 @@
 import React from 'react';
-import {Background, Kicker, Panel, Reveal, SceneFrame} from '../components/ui';
+import {
+  Background,
+  FigureCaption,
+  Panel,
+  Reveal,
+  SceneFrame,
+  SceneHeader,
+  Split,
+} from '../components/ui';
+import {FigureTwin} from '../components/figures';
 import {useLayout} from '../layout';
 import {palette, weight} from '../theme';
 import type {AdContent} from '../content/schema';
@@ -10,42 +19,50 @@ export const Twin: React.FC<{content: AdContent}> = ({content}) => {
 
   return (
     <>
-      <Background />
+      <Background tone="left" />
       <SceneFrame>
-        <Reveal delay={0}>
-          <Kicker>{content.twin.title}</Kicker>
-        </Reveal>
-        <div style={{height: px(30)}} />
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: portrait ? '1fr' : '1fr 1fr',
-            gap: px(16),
-          }}
-        >
-          {content.twin.cards.map((card, i) => (
-            <Reveal key={card.title} delay={6 + i * 14} distance={16}>
-              <Panel>
-                <div style={{fontSize: px(31), fontWeight: weight.medium}}>{card.title}</div>
-                {card.text ? (
-                  <div
-                    style={{
-                      fontSize: px(21),
-                      lineHeight: 1.4,
-                      color: palette.textMuted,
-                      marginTop: px(8),
-                    }}
-                  >
-                    {card.text}
-                  </div>
-                ) : null}
-              </Panel>
+        <SceneHeader {...content.twin.heading} size={42} />
+        <Split
+          ratio={[1, 1.12]}
+          left={
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: portrait ? '1fr 1fr' : '1fr 1fr',
+                gap: px(12),
+              }}
+            >
+              {content.twin.cards.map((card, i) => (
+                <Reveal key={card.title} delay={18 + i * 12} distance={14}>
+                  <Panel style={{height: '100%', padding: px(20)}}>
+                    <div style={{fontSize: px(27), fontWeight: weight.medium}}>{card.title}</div>
+                    {card.text ? (
+                      <div
+                        style={{
+                          fontSize: px(19),
+                          lineHeight: 1.38,
+                          color: palette.textMuted,
+                          marginTop: px(6),
+                        }}
+                      >
+                        {card.text}
+                      </div>
+                    ) : null}
+                  </Panel>
+                </Reveal>
+              ))}
+            </div>
+          }
+          right={
+            <Reveal delay={22}>
+              <FigureTwin height={400} />
+              <FigureCaption>{content.meta.figureNote}</FigureCaption>
             </Reveal>
-          ))}
-        </div>
-        <div style={{height: px(34)}} />
+          }
+        />
+        <div style={{height: px(28)}} />
         <Reveal delay={168} distance={14}>
-          <div style={{fontSize: px(30), fontWeight: weight.medium, color: palette.greenSoft}}>
+          <div style={{fontSize: px(29), fontWeight: weight.medium, color: palette.greenSoft}}>
             {content.twin.output}
           </div>
         </Reveal>

@@ -1,5 +1,7 @@
 import React from 'react';
+import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
 import {Background, Brandmark, Reveal, SceneFrame} from '../components/ui';
+import {FigureGlobe} from '../components/figures';
 import {useLayout} from '../layout';
 import {font, palette, weight} from '../theme';
 import type {AdContent} from '../content/schema';
@@ -9,11 +11,25 @@ import type {AdContent} from '../content/schema';
  * Nessun logo di terzi: gli accreditamenti compaiono come testo.
  */
 export const Cta: React.FC<{content: AdContent}> = ({content}) => {
-  const {px} = useLayout();
+  const frame = useCurrentFrame();
+  const {px, portrait, width} = useLayout();
+  const globeIn = interpolate(frame, [0, 30], [0, 1], {extrapolateRight: 'clamp'});
 
   return (
     <>
-      <Background grid={false} />
+      <Background grid={false} tone="bottom-right" />
+      <AbsoluteFill
+        style={{
+          alignItems: 'flex-end',
+          justifyContent: portrait ? 'flex-end' : 'center',
+          paddingRight: portrait ? 0 : width * 0.04,
+          opacity: globeIn * 0.9,
+        }}
+      >
+        <div style={{width: px(portrait ? 380 : 520)}}>
+          <FigureGlobe height={portrait ? 380 : 520} faint />
+        </div>
+      </AbsoluteFill>
       <SceneFrame>
         <Reveal delay={0} distance={18}>
           <Brandmark size={76} />
@@ -26,6 +42,7 @@ export const Cta: React.FC<{content: AdContent}> = ({content}) => {
               fontWeight: weight.semibold,
               lineHeight: 1.1,
               letterSpacing: px(-1.2),
+              textShadow: '0 6px 40px rgba(1,10,7,0.7)',
             }}
           >
             {content.cta.claim}
@@ -61,6 +78,7 @@ export const Cta: React.FC<{content: AdContent}> = ({content}) => {
                   border: `1px solid ${palette.line}`,
                   borderRadius: px(999),
                   padding: `${px(8)}px ${px(16)}px`,
+                  backgroundColor: palette.panel,
                 }}
               >
                 {badge}

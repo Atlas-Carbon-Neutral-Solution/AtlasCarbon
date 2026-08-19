@@ -16,6 +16,7 @@ export const it: AdContent = {
     approvedBy: null,
     approvedOn: null,
     version: 'v1 — bozza',
+    figureNote: 'Schema illustrativo. Non rappresenta dati di misura.',
   },
 
   vo: {
@@ -39,6 +40,7 @@ export const it: AdContent = {
   },
 
   problem: {
+    heading: {label: '01 · Il problema', title: 'Il dato che nessuno può verificare'},
     bullets: [
       'Stime generiche al posto di misure prese sul campo.',
       'Dati che nessuno può verificare in modo indipendente.',
@@ -49,7 +51,7 @@ export const it: AdContent = {
   },
 
   stack: {
-    title: 'Dal suolo al registry, in cinque passaggi',
+    heading: {label: '02 · Workflow', title: 'Dal suolo al registry, in cinque passaggi'},
     steps: [
       {
         index: '01',
@@ -80,7 +82,7 @@ export const it: AdContent = {
   },
 
   space: {
-    title: 'Architettura space-native',
+    heading: {label: '03 · Space-native', title: 'Il dato nasce in campo, si valida dall’orbita'},
     rows: [
       {tag: 'Sentinel-1 SAR', text: 'Il radar attraversa le nuvole: serie storiche continue, senza buchi.'},
       {tag: 'Sentinel-2 MSI', text: 'Stato vegetativo e biomassa su larga scala, oltre il rilievo a terra.'},
@@ -91,7 +93,7 @@ export const it: AdContent = {
   },
 
   twin: {
-    title: 'Digital twin agronomico',
+    heading: {label: '04 · Digital twin', title: 'Dalla certificazione alla gestione predittiva'},
     cards: [
       {title: 'Simulare', text: 'Crescita e rese, parcella per parcella.'},
       {title: 'Anticipare', text: 'Stress idrico, malattie, anomalie climatiche.'},
@@ -102,7 +104,7 @@ export const it: AdContent = {
   },
 
   whyNow: {
-    title: 'Perché ora',
+    heading: {label: '05 · Perché ora', title: 'La finestra regolatoria è aperta adesso'},
     cards: [
       {title: 'CRCF', text: 'Il quadro europeo sulle rimozioni alza l’asticella su misura e verifica.'},
       {title: 'Green Claims', text: 'Le dichiarazioni ambientali non verificabili diventano esposizione legale.'},

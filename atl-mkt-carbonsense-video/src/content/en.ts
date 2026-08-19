@@ -14,6 +14,7 @@ export const en: AdContent = {
     approvedBy: null,
     approvedOn: null,
     version: 'v1 — draft',
+    figureNote: 'Illustrative diagram. Not measurement data.',
   },
 
   vo: {
@@ -37,6 +38,7 @@ export const en: AdContent = {
   },
 
   problem: {
+    heading: {label: '01 · The problem', title: 'The data nobody can verify'},
     bullets: [
       'Generic estimates standing in for field measurement.',
       'Data nobody can verify independently.',
@@ -47,7 +49,7 @@ export const en: AdContent = {
   },
 
   stack: {
-    title: 'From soil to registry, in five steps',
+    heading: {label: '02 · Workflow', title: 'From soil to registry, in five steps'},
     steps: [
       {
         index: '01',
@@ -78,7 +80,7 @@ export const en: AdContent = {
   },
 
   space: {
-    title: 'Space-native architecture',
+    heading: {label: '03 · Space-native', title: 'Measured in the field, validated from orbit'},
     rows: [
       {tag: 'Sentinel-1 SAR', text: 'Radar sees through clouds: continuous time series, no gaps.'},
       {tag: 'Sentinel-2 MSI', text: 'Vegetation status and biomass at a scale ground survey cannot reach.'},
@@ -89,7 +91,7 @@ export const en: AdContent = {
   },
 
   twin: {
-    title: 'Agronomic digital twin',
+    heading: {label: '04 · Digital twin', title: 'From certification to predictive management'},
     cards: [
       {title: 'Simulate', text: 'Growth and yields, parcel by parcel.'},
       {title: 'Anticipate', text: 'Water stress, disease, climate anomalies.'},
@@ -100,7 +102,7 @@ export const en: AdContent = {
   },
 
   whyNow: {
-    title: 'Why now',
+    heading: {label: '05 · Why now', title: 'The regulatory window is open now'},
     cards: [
       {title: 'CRCF', text: 'The European removals framework raises the bar on measurement and verification.'},
       {title: 'Green Claims', text: 'Unverifiable environmental claims turn into legal exposure.'},

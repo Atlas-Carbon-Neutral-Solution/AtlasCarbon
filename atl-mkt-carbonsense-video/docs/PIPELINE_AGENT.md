@@ -54,6 +54,11 @@ Guardrail non negoziabili:
 - Ruoli: Zampieri CEO, Garbin CSO, Montagna Compliance. CTO full-time = post-round.
 - Perimetro normativo post-Omnibus I: non usare la CSRD obbligatoria come leva sul cliente tipo.
 - Materiale client-facing in italiano; inglese solo per ESA/investor/partner esteri.
+- Ogni scena ha una testata (etichetta ≤ 6 parole + titolo ≤ 9 parole): senza titolo
+  si perde il contesto che nel deck davano i titoli di slide.
+- Figure: solo SVG disegnati nel progetto. Nessuna foto, nessun logo di terzi, nessun
+  dato numerico inventato. Se una figura somiglia a un grafico, la scena mostra
+  `meta.figureNote`.
 ```
 
 ## Vincoli di durata

@@ -69,22 +69,67 @@ const OrbitalGrid: React.FC = () => {
   );
 };
 
-export const Background: React.FC<{grid?: boolean}> = ({grid = true}) => (
-  <AbsoluteFill style={{backgroundColor: palette.forest}}>
-    <AbsoluteFill
-      style={{
-        background: `radial-gradient(120% 90% at 78% 18%, ${palette.canopy} 0%, ${palette.forest} 46%, ${palette.forestDeep} 100%)`,
-      }}
-    />
-    {grid ? <OrbitalGrid /> : null}
-    <AbsoluteFill
-      style={{
-        background:
-          'radial-gradient(80% 70% at 50% 55%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%)',
-      }}
-    />
-  </AbsoluteFill>
-);
+/**
+ * Posizione della luce per scena: cambiare l'accento evita che sette scene
+ * consecutive sullo stesso fondo sembrino la stessa immagine.
+ */
+export type Tone = 'top-right' | 'left' | 'bottom-right' | 'center';
+
+const GLOW: Record<Tone, {x: string; y: string}> = {
+  'top-right': {x: '80%', y: '16%'},
+  left: {x: '14%', y: '34%'},
+  'bottom-right': {x: '76%', y: '78%'},
+  center: {x: '50%', y: '40%'},
+};
+
+export const Background: React.FC<{grid?: boolean; tone?: Tone}> = ({
+  grid = true,
+  tone = 'top-right',
+}) => {
+  const glow = GLOW[tone];
+
+  return (
+    <AbsoluteFill style={{backgroundColor: palette.forest}}>
+      {/* Strato 1: volume del fondo. */}
+      <AbsoluteFill
+        style={{
+          background: `radial-gradient(110% 85% at ${glow.x} ${glow.y}, ${palette.canopy} 0%, ${palette.forest} 44%, ${palette.forestDeep} 100%)`,
+        }}
+      />
+      {/* Strato 2: alone verde, il punto luce della scena. */}
+      <AbsoluteFill
+        style={{
+          background: `radial-gradient(38% 42% at ${glow.x} ${glow.y}, rgba(47,191,113,0.20) 0%, rgba(47,191,113,0) 70%)`,
+        }}
+      />
+      {/* Strato 3: riflesso freddo opposto, per staccare i piani. */}
+      <AbsoluteFill
+        style={{
+          background:
+            'radial-gradient(50% 50% at 8% 92%, rgba(123,228,149,0.10) 0%, rgba(123,228,149,0) 68%)',
+        }}
+      />
+      {grid ? <OrbitalGrid /> : null}
+      {/* Strato 4: grana fine. Un pattern CSS, non un filtro SVG: costa nulla
+          per frame e sul render 1080p non si vede la differenza. */}
+      <AbsoluteFill
+        style={{
+          backgroundImage:
+            'radial-gradient(rgba(255,255,255,0.055) 0.5px, rgba(255,255,255,0) 0.5px)',
+          backgroundSize: '3px 3px',
+          opacity: 0.85,
+        }}
+      />
+      {/* Strato 5: vignettatura. */}
+      <AbsoluteFill
+        style={{
+          background:
+            'radial-gradient(85% 75% at 50% 50%, rgba(0,0,0,0) 38%, rgba(0,0,0,0.52) 100%)',
+        }}
+      />
+    </AbsoluteFill>
+  );
+};
 
 /** Contenitore di scena: margini di sicurezza uguali in tutti i formati. */
 export const SceneFrame: React.FC<{
@@ -128,16 +173,98 @@ export const Kicker: React.FC<{children: React.ReactNode}> = ({children}) => {
   );
 };
 
-export const SceneTitle: React.FC<{children: React.ReactNode}> = ({children}) => {
+export const SceneTitle: React.FC<{size?: number; children: React.ReactNode}> = ({
+  size = 52,
+  children,
+}) => {
   const {px} = useLayout();
 
   return (
     <div
       style={{
-        fontSize: px(52),
+        fontSize: px(size),
         fontWeight: weight.semibold,
         letterSpacing: px(-0.8),
         lineHeight: 1.12,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+/**
+ * Testata di scena: etichetta numerata + titolo.
+ * Senza il titolo lo spettatore vede una lista e non sa di che si parla: è la
+ * stessa funzione che aveva il titolo di slide nel deck.
+ */
+export const SceneHeader: React.FC<{
+  label: string;
+  title: string;
+  size?: number;
+  delay?: number;
+}> = ({label, title, size = 46, delay = 0}) => {
+  const {px} = useLayout();
+
+  return (
+    <div style={{marginBottom: px(26)}}>
+      <Reveal delay={delay}>
+        <div style={{display: 'flex', alignItems: 'center', gap: px(14)}}>
+          <div style={{width: px(34), height: px(2), backgroundColor: palette.green}} />
+          <Kicker>{label}</Kicker>
+        </div>
+      </Reveal>
+      <Reveal delay={delay + 8} distance={18}>
+        <div style={{marginTop: px(14)}}>
+          <SceneTitle size={size}>{title}</SceneTitle>
+        </div>
+      </Reveal>
+    </div>
+  );
+};
+
+/**
+ * Due colonne in orizzontale, una sotto l'altra in verticale: le scene non
+ * ripetono la logica del formato.
+ */
+export const Split: React.FC<{
+  ratio?: [number, number];
+  align?: React.CSSProperties['alignItems'];
+  left: React.ReactNode;
+  right: React.ReactNode;
+}> = ({ratio = [1, 1], align = 'center', left, right}) => {
+  const {px, portrait} = useLayout();
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: portrait ? 'column' : 'row',
+        alignItems: portrait ? 'stretch' : align,
+        gap: px(portrait ? 30 : 46),
+      }}
+    >
+      <div style={{flex: ratio[0], minWidth: 0}}>{left}</div>
+      <div style={{flex: ratio[1], minWidth: 0}}>{right}</div>
+    </div>
+  );
+};
+
+/**
+ * Nota sotto le figure che somigliano a un grafico: dichiara che è uno schema,
+ * non una misura. Serve esattamente dove il pubblico potrebbe leggere un dato.
+ */
+export const FigureCaption: React.FC<{children: React.ReactNode}> = ({children}) => {
+  const {px} = useLayout();
+
+  return (
+    <div
+      style={{
+        fontFamily: font.mono,
+        fontSize: px(14),
+        letterSpacing: px(0.6),
+        color: palette.textFaint,
+        marginTop: px(12),
       }}
     >
       {children}

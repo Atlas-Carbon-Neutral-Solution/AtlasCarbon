@@ -1,6 +1,7 @@
 import React from 'react';
 import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
-import {Background, Kicker, Reveal, SceneFrame} from '../components/ui';
+import {Background, Reveal, SceneFrame, SceneHeader, Split} from '../components/ui';
+import {FigureOrbit} from '../components/figures';
 import {useLayout} from '../layout';
 import {font, palette, weight} from '../theme';
 import type {AdContent} from '../content/schema';
@@ -23,45 +24,52 @@ export const Space: React.FC<{content: AdContent}> = ({content}) => {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
+  const payoffScale = interpolate(frame, [PAYOFF_START + 12, PAYOFF_START + 78], [0.97, 1.02], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
 
   return (
     <>
-      <Background />
+      <Background tone="center" />
       <AbsoluteFill style={{opacity: listOpacity}}>
         <SceneFrame>
-          <Reveal delay={0}>
-            <Kicker>{content.space.title}</Kicker>
-          </Reveal>
-          <div style={{height: px(34)}} />
-          <div style={{display: 'flex', flexDirection: 'column', gap: px(22)}}>
-            {content.space.rows.map((row, i) => (
-              <Reveal key={row.tag} delay={8 + i * 22} distance={16}>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: px(4),
-                    borderTop: `1px solid ${palette.line}`,
-                    paddingTop: px(14),
-                  }}
-                >
-                  <div
-                    style={{
-                      fontFamily: font.mono,
-                      fontSize: px(19),
-                      letterSpacing: px(1.4),
-                      color: palette.greenSoft,
-                    }}
-                  >
-                    {row.tag}
-                  </div>
-                  <div style={{fontSize: px(28), lineHeight: 1.34, fontWeight: weight.regular}}>
-                    {row.text}
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+          <SceneHeader {...content.space.heading} size={42} />
+          <Split
+            ratio={[1.08, 1]}
+            left={
+              <div style={{display: 'flex', flexDirection: 'column', gap: px(18)}}>
+                {content.space.rows.map((row, i) => (
+                  <Reveal key={row.tag} delay={20 + i * 18} distance={14}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: px(3),
+                        borderTop: `1px solid ${palette.line}`,
+                        paddingTop: px(12),
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontFamily: font.mono,
+                          fontSize: px(18),
+                          letterSpacing: px(1.4),
+                          color: palette.greenSoft,
+                        }}
+                      >
+                        {row.tag}
+                      </div>
+                      <div style={{fontSize: px(25), lineHeight: 1.34, fontWeight: weight.regular}}>
+                        {row.text}
+                      </div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            }
+            right={<FigureOrbit height={470} />}
+          />
         </SceneFrame>
       </AbsoluteFill>
       <AbsoluteFill
@@ -80,6 +88,8 @@ export const Space: React.FC<{content: AdContent}> = ({content}) => {
             letterSpacing: px(-1.4),
             color: palette.text,
             textAlign: 'center',
+            transform: `scale(${payoffScale})`,
+            textShadow: '0 8px 46px rgba(1,10,7,0.8)',
           }}
         >
           {content.space.payoff}

@@ -16,6 +16,18 @@ export type SceneKey =
   | 'whyNow'
   | 'cta';
 
+/**
+ * Testata di scena: l'etichetta numerata dà il posto nella narrazione, il
+ * titolo dà il contesto. Sono i titoli delle slide del deck, riportati nel
+ * video: senza, lo spettatore legge una lista senza sapere di cosa parla.
+ */
+export type Heading = {
+  /** ≤ 6 parole, in maiuscoletto. */
+  label: string;
+  /** ≤ 9 parole. */
+  title: string;
+};
+
 export type Meta = {
   /** Codice interno del file di contenuti. */
   id: string;
@@ -31,6 +43,11 @@ export type Meta = {
   approvedBy: string | null;
   approvedOn: string | null;
   version: string;
+  /**
+   * Nota mostrata sotto le figure che somigliano a un grafico: dichiara che
+   * sono schemi, non misure. Vedi `src/components/figures.tsx`.
+   */
+  figureNote: string;
 };
 
 export type Step = {
@@ -64,28 +81,29 @@ export type AdContent = {
     lines: [string, string];
   };
   problem: {
+    heading: Heading;
     /** 4 bullet, ≤ 13 parole ciascuno. */
     bullets: string[];
     key: string;
   };
   stack: {
-    title: string;
+    heading: Heading;
     /** 5 passaggi: suolo → registry. */
     steps: Step[];
   };
   space: {
-    title: string;
+    heading: Heading;
     rows: TaggedRow[];
     payoff: string;
   };
   twin: {
-    title: string;
+    heading: Heading;
     /** 4 card ≤ 6 parole. */
     cards: Card[];
     output: string;
   };
   whyNow: {
-    title: string;
+    heading: Heading;
     /** 3 card ≤ 14 parole. */
     cards: Card[];
     /**

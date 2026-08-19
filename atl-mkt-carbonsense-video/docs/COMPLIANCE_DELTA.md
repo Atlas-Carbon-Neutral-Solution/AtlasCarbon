@@ -45,6 +45,27 @@ italiano non trasferite in `src/content/it.ts` e `en.ts`.
 | Sentinel-1 / -2 / -5P, Galileo come testo | scena Space | Solo citazione testuale: nessun logo Copernicus/ESA/Galileo (riga 10). |
 | "Ethereum L2" | `stack.steps[4].detail` | Coerente con l'ancoraggio SHA-256 su Base L2 usato dal registry Atlas. |
 
+## Figure e titoli aggiunti nel passaggio a video
+
+Il video ha bisogno di due cose che il testo dello script non prevedeva: i
+titoli di scena (senza, il pubblico perde il contesto che nel deck davano i
+titoli di slide) e un contenuto visivo per scena. Entrambi sono materiale
+dichiarativo, quindi valgono le stesse regole.
+
+| Elemento | Scelta | Motivo |
+|---|---|---|
+| Titoli di scena | Ripresi dai titoli delle slide del deck (Workflow, Space-native, Digital twin, Perché ora) e riscritti come frasi brevi | Danno il contesto senza aggiungere claim. Nessun titolo introduce affermazioni assenti dal corpo della scena. |
+| Immagini | **Nessuna foto, nessun rendering, nessun logo di terzi.** Solo figure vettoriali disegnate nel progetto | Una foto di campo richiederebbe diritti e il consenso di chi coltiva quel campo; i loghi Copernicus/ESA/Galileo non sono utilizzabili come endorsement (riga 10). |
+| Figure con forma di grafico (scene 01 e 04) | Schemi senza assi, senza valori, senza scale, con la nota "Schema illustrativo. Non rappresenta dati di misura." | Una curva in uno spot viene letta come una misura. Senza dati reali e verificati, la sola forma difendibile è lo schema dichiarato. |
+| Curva "simulato" del digital twin | Tratteggiata, separata dal misurato da un confine "oggi" | Distingue a vista la previsione dalla misura: è la differenza che conta davanti a un auditor. |
+| Fascio SAR che attraversa le nuvole | Rappresentato come funzione (il fascio passa lo strato nuvole, l'ottico si ferma) | Illustra il vantaggio tecnico senza dichiarare prestazioni non misurate. |
+| Box "misura verificabile" nella scena 05 | Le tre spinte normative convergono su una richiesta | Nessuna delle tre è presentata come obbligo per il cliente tipo (vedi riga 6). |
+| Globo | Wireframe astratto con un punto acceso | Non è una mappa: nessuna area geografica è indicata come coperta da progetti attivi. |
+
+Se in futuro si vogliono riprese reali, valgono le condizioni del README §5:
+diritti in capo ad Atlas e nessun luogo che identifichi un cliente non
+consenziente.
+
 ## Deroghe redazionali del passaggio a video
 
 Il voiceover dello script supera i limiti di parole della tabella "Vincoli di

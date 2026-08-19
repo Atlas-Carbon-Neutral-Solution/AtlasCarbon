@@ -118,6 +118,27 @@ const checkContent = (content) => {
     }
   }
 
+  // Testate di scena: senza titolo si perde il contesto, con un titolo lungo si
+  // perde la leggibilità.
+  for (const scene of ['problem', 'stack', 'space', 'twin', 'whyNow']) {
+    const heading = content[scene].heading;
+    if (!heading?.title || !heading?.label) {
+      add(errors, locale, `${scene}.heading`, 'testata mancante: etichetta + titolo');
+      continue;
+    }
+    if (words(heading.label) > 6) {
+      add(errors, locale, `${scene}.heading.label`, `${words(heading.label)} parole (max 6)`);
+    }
+    if (words(heading.title) > 9) {
+      add(errors, locale, `${scene}.heading.title`, `${words(heading.title)} parole (max 9)`);
+    }
+  }
+
+  // Le figure che somigliano a un grafico vanno dichiarate come schemi.
+  if (!content.meta.figureNote) {
+    add(errors, locale, 'meta.figureNote', 'nota mancante sulle figure schematiche');
+  }
+
   // Limiti del testo a schermo (leggibilità in autoplay muto).
   content.problem.bullets.forEach((bullet, i) => {
     if (words(bullet) > 13) add(errors, locale, `problem.bullets[${i}]`, `${words(bullet)} parole (max 13)`);

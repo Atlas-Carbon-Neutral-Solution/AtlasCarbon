@@ -111,13 +111,40 @@ src/
   content/
     schema.ts           tipo dei contenuti (contratto dati↔grafica)
     it.ts / en.ts       TESTI — l'unico file da toccare per cambiare il messaggio
-  components/ui.tsx     sfondo, titoli, reveal, brandmark, progress rail, sottotitoli
+  components/
+    ui.tsx              fondo a strati, testate, split, reveal, brandmark, rail, sottotitoli
+    figures.tsx         figure schematiche animate in SVG, una per scena
   scenes/               7 scene, una per blocco narrativo
 scripts/
   check-claims.mjs      guardrail anti-overclaim + vincoli di durata
   render-all.mjs        render batch con naming ATL_MKT_* e gate approvazione
 docs/                   script/storyboard, delta di compliance, pipeline agente, sorgenti
 ```
+
+## 4b. Titoli di scena e figure
+
+Ogni scena ha una **testata**: etichetta numerata + titolo, in `heading` dentro
+`src/content/*.ts`. Sono i titoli delle slide del deck riportati nel video:
+senza, lo spettatore legge un elenco senza sapere di cosa si parla. Il limite è
+6 parole per l'etichetta e 9 per il titolo, verificato da `check:claims`.
+
+Le **figure** stanno in `src/components/figures.tsx` e sono disegnate in SVG,
+animate sul frame corrente. Nessuna immagine di stock e nessun logo di terzi:
+niente licenze da verificare, niente marchi usati come endorsement.
+
+Tre regole, perché una figura è una dichiarazione come il testo:
+
+1. **Nessun dato inventato.** Gli schemi mostrano rapporti e topologia, non
+   misure: nessun asse con valori, nessuna percentuale, nessuna quantità.
+2. **Dove la forma somiglia a un grafico** (scena 01 e scena 04) la scena
+   mostra `meta.figureNote` — "Schema illustrativo. Non rappresenta dati di
+   misura." Non rimuoverla: è ciò che impedisce di leggere una curva come una
+   misura di assorbimento.
+3. **Identità mai affidata al solo colore.** Continuo/tratteggiato più etichetta
+   diretta: leggibile anche stampata, in bianco e nero o con daltonismo.
+
+Per aggiungere una figura a una scena nuova: si scrive in `figures.tsx`, si
+riempie la colonna con `Split` e si limita l'altezza con la prop `height`.
 
 ## 5. Personalizzazioni frequenti
 
@@ -142,6 +169,7 @@ i claim rimossi senza una decisione esplicita e tracciata.
 ## 7. Stato di questa versione
 
 - Contenuti IT ed EN scritti, `check:claims` verde, `typecheck` verde.
+- Testate di scena e figure schematiche su tutte le scene, in 16:9 e 9:16.
 - Render verificato: still su tutte le scene e master 60" IT 16:9.
 - `meta.approvedBy` è `null` in entrambi i file: nessun output è pubblicabile.
 - Voiceover e musica non inclusi (`voiceover`/`music` a `null`): i testi VO
