@@ -1,0 +1,8 @@
+node_modules/
+out/
+.env
+.env.*
+public/vo-*.mp3
+public/music-*.mp3
+public/*.mp4
+!public/.gitkeep
