@@ -132,6 +132,7 @@ src/
 scripts/
   check-claims.mjs      guardrail anti-overclaim + vincoli di durata
   make-music.mjs        sintetizza la traccia musicale (nessuna licenza di terzi)
+  prepare-logo.mjs      da PNG su fondo bianco a marchio trasparente e ritagliato
   set-logo.mjs          installa il marchio in public/ e aggiorna Root.tsx
   render-all.mjs        render batch con naming ATL_MKT_* e gate approvazione
 docs/                   script/storyboard, delta di compliance, pipeline agente, sorgenti
@@ -176,9 +177,10 @@ Il simbolo del marchio contiene entrambi, quindi il video li usa entrambi, e la
 scena Stack li mette in fila: si vede il dato salire dal verde del suolo al blu
 del registro.
 
-> I due esadecimali in `theme.ts` sono **stimati dall'immagine del marchio**. Se
-> il brand book ha i codici esatti, si correggono lì: nessun altro file contiene
-> esadecimali di brand.
+> I due esadecimali in `theme.ts` sono **campionati dal file del marchio**
+> (`node scripts/prepare-logo.mjs <file> --colors`). Se il brand book indica
+> coordinate diverse — tipico quando si parte da Pantone o CMYK — si correggono
+> lì: nessun altro file del progetto contiene esadecimali di brand.
 
 ## 4c. Marchio e audio
 
@@ -187,19 +189,38 @@ del registro.
 1800 frame e i tempi del montaggio non cambiano. L'ultimo fotogramma è marchio +
 dominio, come si aspetta chi guarda uno spot.
 
-**Marchio reale.** Il `Logo` usa il segnaposto vettoriale finché non riceve un
-file. Appena avete il marchio:
+**Marchio.** In `public/logo-atlas.png` c'è il lockup Atlas (simbolo +
+"ATLAS" + ragione sociale), con sfondo trasparente e margini ritagliati: è
+attivo negli stacchi di apertura e chiusura e nella scena CTA.
+
+È stato ricavato da un **PNG a 375 px**, quindi la risoluzione utile è
+327×92: basta per le dimensioni usate ora (150 px di altezza negli stacchi,
+76 nella CTA), ma non per ingrandirlo. Per titoli a tutto schermo o formati
+stampa serve l'**originale vettoriale**.
+
+Un file consegnato su fondo bianco si prepara così:
+
+```bash
+node scripts/prepare-logo.mjs marchio.png            # → public/logo-atlas.png
+node scripts/prepare-logo.mjs marchio.png --colors   # solo i colori campionati
+```
+
+Ritaglia i margini e ricostruisce i bordi antialiasati sul colore di brand
+(alpha per proiezione), così sul fondo scuro non resta alone bianco. Nota: i
+separatori interni del simbolo, bianchi nell'originale, diventano trasparenti e
+quindi mostrano il fondo. Se il brand book prescrive una versione negativa con
+separatori bianchi, va usata quella.
+
+Per sostituire il file:
 
 ```bash
 npm run set:logo -- ~/Downloads/logo-atlas.svg   # .svg, .png o .webp
 npm run set:logo -- --none                       # torna al segnaposto
 ```
 
-Lo script copia il file in `public/` e aggiorna il prop `logo` in `Root.tsx`:
-il marchio compare in apertura, in chiusura e nella scena CTA. Meglio un SVG —
-scala senza perdita su tutti i formati; un PNG deve avere lo sfondo
-trasparente, perché su fondo scuro un bianco si vede. Il segnaposto **non** è
-il marchio registrato e non va usato in pubblicazione.
+Lo script copia il file in `public/` e aggiorna il prop `logo` in `Root.tsx`.
+Meglio un SVG: scala senza perdita su tutti i formati. Con `--none` si torna al
+segnaposto vettoriale, che **non** è il marchio e non va usato in pubblicazione.
 
 **Musica.** `public/music-atlas-ambient.mp3` è generata da
 `npm run make:music`: bordone in La minore, battito lento e un accento su ogni
@@ -232,10 +253,10 @@ i claim rimossi senza una decisione esplicita e tracciata.
 
 - Contenuti IT ed EN scritti, `check:claims` verde, `typecheck` verde.
 - Testate di scena e figure schematiche su tutte le scene, in 16:9 e 9:16.
-- Stacchi marchio in apertura e chiusura, con il segnaposto: il marchio registrato
-  non è ancora nel progetto (§4c).
+- Stacchi marchio in apertura e chiusura con il **marchio Atlas** (§4c). Manca
+  l'originale vettoriale: il file attuale nasce da un PNG a 375 px.
 - Musica generata dal progetto, attiva per default in tutte le composizioni.
-- Palette allineata ai colori del marchio (valori stimati dall'immagine: §4a).
+- Palette costruita sui colori campionati dal marchio (§4a).
 - Render verificato: still su tutte le scene e master 60" IT 16:9.
 - `meta.approvedBy` è `null` in entrambi i file: nessun output è pubblicabile.
 - Voiceover e musica non inclusi (`voiceover`/`music` a `null`): i testi VO

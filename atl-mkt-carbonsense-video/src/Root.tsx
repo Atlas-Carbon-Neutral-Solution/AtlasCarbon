@@ -40,7 +40,7 @@ export const RemotionRoot: React.FC = () => (
             // Traccia generata da `npm run make:music`: prodotta in casa.
             music: 'music-atlas-ambient.mp3',
             // Diventa 'logo-atlas.svg' appena il marchio registrato è in public/.
-            logo: null,
+            logo: 'logo-atlas.png',
             subtitles: format.subtitles,
           }}
         />

@@ -73,7 +73,7 @@ export const OpenBumper: React.FC<{logo?: string | null}> = ({logo = null}) => {
           transform: `scale(${scale})`,
         }}
       >
-        <Logo size={104} src={logo} />
+        <Logo size={150} src={logo} />
         <Sweep progress={interpolate(frame, [8, OPEN_BUMPER_END], [0, 1], {extrapolateRight: 'clamp'})} />
       </AbsoluteFill>
     </AbsoluteFill>
@@ -112,7 +112,7 @@ export const CloseBumper: React.FC<{logo?: string | null; site: string}> = ({
           transform: `scale(${scale})`,
         }}
       >
-        <Logo size={104} src={logo} />
+        <Logo size={150} src={logo} />
         <div
           style={{
             marginTop: px(30),
