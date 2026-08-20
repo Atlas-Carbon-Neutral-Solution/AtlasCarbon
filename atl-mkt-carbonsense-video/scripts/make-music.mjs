@@ -89,9 +89,13 @@ for (let i = 0; i < total; i++) {
     sampleR += bell * env;
   }
 
-  // Dissolvenze: mezzo secondo in ingresso, due secondi in uscita.
-  const fadeIn = Math.min(t / 0.5, 1);
-  const fadeOut = Math.min((SECONDS - t) / 2, 1);
+  // Silenzio pieno in testa e in coda, poi le dissolvenze.
+  // Il primo frame mp3 esce dal decoder con un transiente: se lì c'è segnale si
+  // sente come un click in apertura, quindi lì non ci deve essere nulla.
+  const LEAD_IN = 0.35;
+  const LEAD_OUT = 0.2;
+  const fadeIn = t < LEAD_IN ? 0 : Math.min((t - LEAD_IN) / 0.75, 1);
+  const fadeOut = t > SECONDS - LEAD_OUT ? 0 : Math.min((SECONDS - LEAD_OUT - t) / 2, 1);
   const fade = Math.max(Math.min(fadeIn, fadeOut), 0);
 
   left[i] = softClip(sampleL * 0.22) * fade;

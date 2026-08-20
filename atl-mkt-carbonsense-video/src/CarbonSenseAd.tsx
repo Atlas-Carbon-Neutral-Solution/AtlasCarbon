@@ -129,8 +129,20 @@ export const CarbonSenseAd: React.FC<CarbonSenseAdProps> = ({
       <CloseBumper logo={logo} site={content.cta.site} />
 
       {voiceover ? <Audio src={staticFile(voiceover)} /> : null}
-      {/* Con il voiceover la musica scende: la voce deve restare intelligibile. */}
-      {music ? <Audio src={staticFile(music)} volume={voiceover ? 0.2 : 0.34} /> : null}
+      {/* Con il voiceover la musica scende: la voce deve restare intelligibile.
+          Le dissolvenze sono anche qui, non solo nel file: il primo frame di un
+          mp3 esce dal decoder con un transiente. */}
+      {music ? (
+        <Audio
+          src={staticFile(music)}
+          volume={(f) =>
+            interpolate(f, [0, 18, DURATION - 45, DURATION], [0, 1, 1, 0], {
+              extrapolateLeft: 'clamp',
+              extrapolateRight: 'clamp',
+            }) * (voiceover ? 0.2 : 0.34)
+          }
+        />
+      ) : null}
     </AbsoluteFill>
   );
 };
