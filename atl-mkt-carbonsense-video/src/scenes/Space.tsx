@@ -4,7 +4,7 @@ import {Background, Reveal, SceneFrame, SceneHeader, Split} from '../components/
 import {FigureOrbit} from '../components/figures';
 import {useLayout} from '../layout';
 import {font, palette, weight} from '../theme';
-import type {AdContent} from '../content/schema';
+import type {SceneProps} from '../content/schema';
 
 /**
  * 4 · SPACE-NATIVE — 330 frame. Il differenziatore descrittivo: SAR,
@@ -13,7 +13,7 @@ import type {AdContent} from '../content/schema';
  */
 const PAYOFF_START = 252;
 
-export const Space: React.FC<{content: AdContent}> = ({content}) => {
+export const Space: React.FC<SceneProps> = ({content}) => {
   const frame = useCurrentFrame();
   const {px} = useLayout();
   const listOpacity = interpolate(frame, [PAYOFF_START, PAYOFF_START + 20], [1, 0], {

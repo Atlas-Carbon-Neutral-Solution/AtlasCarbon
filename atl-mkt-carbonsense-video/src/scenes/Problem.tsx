@@ -11,10 +11,10 @@ import {
 import {FigureUncertainty} from '../components/figures';
 import {useLayout} from '../layout';
 import {palette, weight} from '../theme';
-import type {AdContent} from '../content/schema';
+import type {SceneProps} from '../content/schema';
 
 /** 2 · PROBLEMA — 240 frame. Il dato non verificabile è il difetto di sistema. */
-export const Problem: React.FC<{content: AdContent}> = ({content}) => {
+export const Problem: React.FC<SceneProps> = ({content}) => {
   const {px} = useLayout();
 
   return (

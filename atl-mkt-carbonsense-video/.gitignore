@@ -3,6 +3,7 @@ out/
 .env
 .env.*
 public/vo-*.mp3
-public/music-*.mp3
+public/music-*.wav
+!public/music-atlas-ambient.mp3
 public/*.mp4
 !public/.gitkeep

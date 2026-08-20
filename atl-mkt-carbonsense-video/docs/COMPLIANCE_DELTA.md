@@ -66,6 +66,14 @@ Se in futuro si vogliono riprese reali, valgono le condizioni del README §5:
 diritti in capo ad Atlas e nessun luogo che identifichi un cliente non
 consenziente.
 
+## Audio e marchio
+
+| Elemento | Scelta | Motivo |
+|---|---|---|
+| Musica | Generata dal progetto: bordone in La minore, battito lento, un accento su ogni stacco di scena | Una traccia di libreria va licenziata, archiviata e riesibita a ogni riuso (ESA, bandi, investor). Prodotta in casa è di Atlas e non ha nulla da dimostrare. Livello a −14 dBFS di picco: sopra ci va il voiceover. |
+| Marchio negli stacchi | Segnaposto vettoriale, sostituibile con un file in `public/` | Il marchio registrato non è nel progetto e in questo ambiente non era scaricabile (dominio bloccato dalla policy di rete). L'aggancio è pronto: file + una riga in `Root.tsx`. |
+| Ultimo fotogramma | Marchio + dominio, nessun claim | È il fotogramma che resta sullo schermo dopo l'autoplay: non è il posto per un'affermazione che poi va difesa. |
+
 ## Deroghe redazionali del passaggio a video
 
 Il voiceover dello script supera i limiti di parole della tabella "Vincoli di
@@ -94,7 +102,12 @@ allungare le scene in `TIMELINE`, non comprimere il parlato.
 2. **Uso dei marchi Copernicus / Galileo / ESA** — verificare le condizioni d'uso prima di
    inserire loghi. Nel progetto attuale compaiono solo come testo.
 3. **Licenza Remotion** — vedi README §0b.
-4. **Musica e voce** — licenza commerciale documentata e archiviata.
+4. **Musica e voce** — la musica dello spot è **generata dal progetto**
+   (`npm run make:music`, `scripts/make-music.mjs`): nessuna licenza di terzi da
+   comprare né da riesibire in un materiale grant/ESA. Resta aperta solo la voce:
+   se si usa voce sintetica va indicata la provenienza nei metadati interni, se si
+   usa voce umana serve la liberatoria. Se in futuro si sostituisce la musica con
+   una traccia di libreria, torna in carico la licenza commerciale documentata.
 5. **Approvazione** — campo `meta.approvedBy` in `content/it.ts` va compilato prima del
    render della versione pubblica.
 6. **Dominio e contatti** — il deck italiano riporta `www.atlascarbonneutral.it`
@@ -104,9 +117,12 @@ allungare le scene in `TIMELINE`, non comprimere il parlato.
 7. **Sede operativa** — il deck indica "Piazza Giacomo Zanellato 23, Padova",
    i dati societari "Le Village by Crédit Agricole, Padova". Lo spot cita solo
    "Milano · Padova": se serve l'indirizzo, prima si allinea.
-8. **Marchio** — `Brandmark` in `src/components/ui.tsx` è un segnaposto
-   astratto, non il marchio registrato (versione Capra). Va sostituito con
-   `public/logo-atlas.svg` prima di qualunque uscita pubblica.
+8. **Marchio** — `Logo` in `src/components/logo.tsx` è un segnaposto astratto,
+   non il marchio registrato (versione Capra). Compare in tre punti: stacco di
+   apertura, scena CTA, stacco di chiusura. Serve il file reale in
+   `public/logo-atlas.svg` più una riga in `Root.tsx` (README §4c) **prima di
+   qualunque uscita pubblica**: uno spot che chiude su un marchio che non è il
+   marchio registrato non è pubblicabile.
 9. **Ruolo del filtro automatico** — `npm run check:claims` intercetta le
    violazioni meccaniche (superiorità, TRL unico, pricing, proiezioni, nomi di
    terzi, brevetto non "depositato", sforamenti di durata). Non decide se un

@@ -307,34 +307,6 @@ export const Panel: React.FC<{
 };
 
 /**
- * Segnaposto astratto: NON è il marchio registrato Atlas (versione Capra).
- * Per il render pubblico va sostituito con `public/logo-atlas.svg` — README §5.
- */
-export const Brandmark: React.FC<{size?: number}> = ({size = 54}) => {
-  const {px} = useLayout();
-  const s = px(size);
-
-  return (
-    <div style={{display: 'flex', alignItems: 'center', gap: px(16)}}>
-      <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
-        <circle cx={24} cy={24} r={21} stroke={palette.greenSoft} strokeWidth={2} opacity={0.55} />
-        <path d="M24 41c0-9 5-15 13-17-1 10-6 16-13 17Z" fill={palette.green} opacity={0.9} />
-        <path d="M24 41c0-9-5-15-13-17 1 10 6 16 13 17Z" fill={palette.greenSoft} opacity={0.5} />
-        <path d="M24 41V19" stroke={palette.text} strokeWidth={2} strokeLinecap="round" />
-      </svg>
-      <div style={{lineHeight: 1.1}}>
-        <div style={{fontSize: px(26), fontWeight: weight.semibold, letterSpacing: px(0.4)}}>
-          ATLAS
-        </div>
-        <div style={{fontFamily: font.mono, fontSize: px(13), color: palette.textMuted}}>
-          CARBON NEUTRAL SOLUTIONS
-        </div>
-      </div>
-    </div>
-  );
-};
-
-/**
  * Riga di stato TRL / brevetto. Non è decorativa: tiene lo spot dentro il
  * perimetro dichiarabile. Non ridurne la leggibilità (docs/COMPLIANCE_DELTA.md).
  */

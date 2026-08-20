@@ -8,7 +8,8 @@ import {
   useCurrentFrame,
 } from 'remotion';
 import {ProgressRail, Subtitles} from './components/ui';
-import type {AdContent, SceneKey} from './content/schema';
+import {CloseBumper, OpenBumper} from './components/LogoBumper';
+import type {AdContent, SceneKey, SceneProps} from './content/schema';
 import {Cta} from './scenes/Cta';
 import {Hook} from './scenes/Hook';
 import {Problem} from './scenes/Problem';
@@ -24,7 +25,7 @@ export const DURATION = 60 * FPS;
 /** Frame di sovrapposizione fra due scene: crossfade breve, non dissolvenza lunga. */
 const OVERLAP = 8;
 
-type SceneComponent = React.FC<{content: AdContent}>;
+type SceneComponent = React.FC<SceneProps>;
 
 /**
  * TIMELINE — fonte unica del montaggio.
@@ -59,7 +60,16 @@ export type CarbonSenseAdProps = {
   content: AdContent;
   /** File in public/, es. "vo-it.mp3". Licenza documentata e archiviata. */
   voiceover?: string | null;
+  /**
+   * Musica in public/. La traccia inclusa è generata da
+   * `npm run make:music`: prodotta in casa, nessuna licenza di terzi.
+   */
   music?: string | null;
+  /**
+   * Marchio in public/ (es. "logo-atlas.svg"). Senza, gli stacchi usano il
+   * segnaposto vettoriale, che non è il marchio registrato.
+   */
+  logo?: string | null;
   /** Sottotitoli incisi: obbligatori sui formati social (autoplay muto). */
   subtitles?: boolean;
 };
@@ -86,6 +96,7 @@ export const CarbonSenseAd: React.FC<CarbonSenseAdProps> = ({
   content,
   voiceover = null,
   music = null,
+  logo = null,
   subtitles = false,
 }) => {
   const frame = useCurrentFrame();
@@ -104,7 +115,7 @@ export const CarbonSenseAd: React.FC<CarbonSenseAdProps> = ({
             name={scene.key}
           >
             <SceneFade isLast={isLast} duration={scene.duration}>
-              <Scene content={content} />
+              <Scene content={content} logo={logo} />
               {subtitles ? <Subtitles text={content.vo[scene.key]} /> : null}
             </SceneFade>
           </Sequence>
@@ -113,8 +124,13 @@ export const CarbonSenseAd: React.FC<CarbonSenseAdProps> = ({
 
       <ProgressRail segments={TIMELINE} frame={frame} total={DURATION} />
 
+      {/* Stacchi marchio: overlay, non scene. La TIMELINE resta intatta. */}
+      <OpenBumper logo={logo} />
+      <CloseBumper logo={logo} site={content.cta.site} />
+
       {voiceover ? <Audio src={staticFile(voiceover)} /> : null}
-      {music ? <Audio src={staticFile(music)} volume={0.18} /> : null}
+      {/* Con il voiceover la musica scende: la voce deve restare intelligibile. */}
+      {music ? <Audio src={staticFile(music)} volume={voiceover ? 0.2 : 0.34} /> : null}
     </AbsoluteFill>
   );
 };

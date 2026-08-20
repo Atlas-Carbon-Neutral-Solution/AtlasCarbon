@@ -4,7 +4,7 @@ import {Background, SceneFrame, SceneHeader, Split} from '../components/ui';
 import {FigureStackLayers} from '../components/figures';
 import {useLayout} from '../layout';
 import {font, palette, weight} from '../theme';
-import type {AdContent} from '../content/schema';
+import type {SceneProps} from '../content/schema';
 
 /**
  * 3 · STACK — 360 frame, 5 passaggi da 72 frame (2,4 s).
@@ -13,7 +13,7 @@ import type {AdContent} from '../content/schema';
  */
 const STEP_DURATION = 72;
 
-export const Stack: React.FC<{content: AdContent}> = ({content}) => {
+export const Stack: React.FC<SceneProps> = ({content}) => {
   const frame = useCurrentFrame();
   const {px} = useLayout();
   const steps = content.stack.steps;

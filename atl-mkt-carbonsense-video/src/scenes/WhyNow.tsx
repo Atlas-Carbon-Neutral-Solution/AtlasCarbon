@@ -3,14 +3,14 @@ import {Background, Panel, Reveal, SceneFrame, SceneHeader, StatusLine} from '..
 import {FigureConvergence} from '../components/figures';
 import {useLayout} from '../layout';
 import {font, palette, weight} from '../theme';
-import type {AdContent} from '../content/schema';
+import type {SceneProps} from '../content/schema';
 
 /**
  * 6 · PERCHÉ ORA — 270 frame. Tre spinte regolatorie convergono sulla stessa
  * richiesta. La riga di stato è obbligatoria: TRL sdoppiato e "brevetto
  * depositato" (docs/COMPLIANCE_DELTA.md righe 1 e 9).
  */
-export const WhyNow: React.FC<{content: AdContent}> = ({content}) => {
+export const WhyNow: React.FC<SceneProps> = ({content}) => {
   const {px, portrait} = useLayout();
   const cards = content.whyNow.cards;
 

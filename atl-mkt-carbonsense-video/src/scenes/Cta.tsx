@@ -1,16 +1,17 @@
 import React from 'react';
 import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
-import {Background, Brandmark, Reveal, SceneFrame} from '../components/ui';
+import {Background, Reveal, SceneFrame} from '../components/ui';
+import {Logo} from '../components/logo';
 import {FigureGlobe} from '../components/figures';
 import {useLayout} from '../layout';
 import {font, palette, weight} from '../theme';
-import type {AdContent} from '../content/schema';
+import type {SceneProps} from '../content/schema';
 
 /**
  * 7 · CTA — 180 frame. Contatto e accreditamenti verificati.
  * Nessun logo di terzi: gli accreditamenti compaiono come testo.
  */
-export const Cta: React.FC<{content: AdContent}> = ({content}) => {
+export const Cta: React.FC<SceneProps> = ({content, logo = null}) => {
   const frame = useCurrentFrame();
   const {px, portrait, width} = useLayout();
   const globeIn = interpolate(frame, [0, 30], [0, 1], {extrapolateRight: 'clamp'});
@@ -32,7 +33,7 @@ export const Cta: React.FC<{content: AdContent}> = ({content}) => {
       </AbsoluteFill>
       <SceneFrame>
         <Reveal delay={0} distance={18}>
-          <Brandmark size={76} />
+          <Logo size={76} src={logo} />
         </Reveal>
         <div style={{height: px(40)}} />
         <Reveal delay={12} distance={22}>

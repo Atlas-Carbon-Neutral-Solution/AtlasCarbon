@@ -36,7 +36,10 @@ export const RemotionRoot: React.FC = () => (
           defaultProps={{
             content,
             voiceover: null,
-            music: null,
+            // Traccia generata da `npm run make:music`: prodotta in casa.
+            music: 'music-atlas-ambient.mp3',
+            // Diventa 'logo-atlas.svg' appena il marchio registrato è in public/.
+            logo: null,
             subtitles: format.subtitles,
           }}
         />

@@ -48,6 +48,7 @@ cd atl-mkt-carbonsense-video && npm i && npx remotion skills add
 ## 2. Controllo contenuti e render
 
 ```bash
+npm run make:music      # rigenera la traccia musicale (già inclusa in public/)
 npm run check:claims    # filtro anti-overclaim + vincoli di durata (blocca il render)
 npm run typecheck       # contratto dati↔grafica
 npm run render:it       # 1920x1080 italiano
@@ -112,11 +113,14 @@ src/
     schema.ts           tipo dei contenuti (contratto dati↔grafica)
     it.ts / en.ts       TESTI — l'unico file da toccare per cambiare il messaggio
   components/
-    ui.tsx              fondo a strati, testate, split, reveal, brandmark, rail, sottotitoli
+    ui.tsx              fondo a strati, testate, split, reveal, rail, sottotitoli
     figures.tsx         figure schematiche animate in SVG, una per scena
+    logo.tsx            marchio: file da public/ oppure segnaposto vettoriale
+    LogoBumper.tsx      stacchi marchio in apertura e chiusura
   scenes/               7 scene, una per blocco narrativo
 scripts/
   check-claims.mjs      guardrail anti-overclaim + vincoli di durata
+  make-music.mjs        sintetizza la traccia musicale (nessuna licenza di terzi)
   render-all.mjs        render batch con naming ATL_MKT_* e gate approvazione
 docs/                   script/storyboard, delta di compliance, pipeline agente, sorgenti
 ```
@@ -146,15 +150,40 @@ Tre regole, perché una figura è una dichiarazione come il testo:
 Per aggiungere una figura a una scena nuova: si scrive in `figures.tsx`, si
 riempie la colonna con `Split` e si limita l'altezza con la prop `height`.
 
+## 4c. Marchio e audio
+
+**Stacchi marchio.** `OpenBumper` (frame 0–48) e `CloseBumper` (1746–1800) in
+`src/components/LogoBumper.tsx` sono overlay, non scene: la `TIMELINE` resta di
+1800 frame e i tempi del montaggio non cambiano. L'ultimo fotogramma è marchio +
+dominio, come si aspetta chi guarda uno spot.
+
+**Marchio reale.** Il `Logo` usa il segnaposto vettoriale finché non riceve un
+file. Appena il marchio registrato (versione Capra) è disponibile:
+
+```bash
+cp logo-atlas.svg public/            # o .png
+# poi in src/Root.tsx: logo: 'logo-atlas.svg'
+```
+
+Nient'altro cambia: il file compare in apertura, in chiusura e nella scena CTA.
+Il segnaposto **non** è il marchio registrato e non va usato in pubblicazione.
+
+**Musica.** `public/music-atlas-ambient.mp3` è generata da
+`npm run make:music`: bordone in La minore, battito lento e un accento su ogni
+stacco di scena della `TIMELINE`, picco a −14 dBFS per lasciare spazio alla voce.
+È prodotta dentro il progetto, quindi non c'è nessuna licenza di terzi da
+comprare, archiviare o riesibire quando il video finisce in un materiale
+grant/ESA. Per cambiarla: si modificano i parametri in `scripts/make-music.mjs`
+e si rigenera. Con il voiceover attivo il volume scende da 0.34 a 0.20.
+
 ## 5. Personalizzazioni frequenti
 
-- **Marchio reale**: mettere `logo-atlas.svg` in `public/` e sostituire `<Brandmark/>` con
-  `<Img src={staticFile('logo-atlas.svg')} />`. Il `Brandmark` attuale è un segnaposto
-  astratto, non il marchio registrato versione Capra.
+- **Marchio reale**: vedi §4c — basta il file in `public/` e una riga in `Root.tsx`.
 - **Voiceover**: `public/vo-it.mp3`, poi in `Root.tsx` `defaultProps: {voiceover: 'vo-it.mp3'}`.
   Lo speakeraggio è già scritto e cronometrato in `docs/`.
-- **Musica**: solo tracce con licenza commerciale documentata (Artlist/Epidemic Sound o
-  equivalente). Conservare la licenza: serve se il video finisce in materiale grant/ESA.
+- **Musica**: la traccia inclusa è generata dal progetto (vedi §4c). Se si passa a una
+  traccia di libreria, serve licenza commerciale documentata e archiviata: serve se il
+  video finisce in materiale grant/ESA.
 - **Riprese reali**: `<OffthreadVideo src={staticFile('campo.mp4')} />` dentro una scena.
   Le immagini di campo vanno usate solo se Atlas ne detiene i diritti e i luoghi non
   identificano un cliente non consenziente.
@@ -170,6 +199,9 @@ i claim rimossi senza una decisione esplicita e tracciata.
 
 - Contenuti IT ed EN scritti, `check:claims` verde, `typecheck` verde.
 - Testate di scena e figure schematiche su tutte le scene, in 16:9 e 9:16.
+- Stacchi marchio in apertura e chiusura, con il segnaposto: il marchio registrato
+  non è ancora nel progetto (§4c).
+- Musica generata dal progetto, attiva per default in tutte le composizioni.
 - Render verificato: still su tutte le scene e master 60" IT 16:9.
 - `meta.approvedBy` è `null` in entrambi i file: nessun output è pubblicabile.
 - Voiceover e musica non inclusi (`voiceover`/`music` a `null`): i testi VO

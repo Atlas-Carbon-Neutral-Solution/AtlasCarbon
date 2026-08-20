@@ -4,17 +4,17 @@ import {Background, Kicker, Reveal, SceneFrame} from '../components/ui';
 import {FigureGlobe} from '../components/figures';
 import {useLayout} from '../layout';
 import {palette, weight} from '../theme';
-import type {AdContent} from '../content/schema';
+import type {SceneProps} from '../content/schema';
 
 /** 1 · HOOK — 150 frame. Si ferma lo scroll con una tesi, non con un logo. */
-export const Hook: React.FC<{content: AdContent}> = ({content}) => {
+export const Hook: React.FC<SceneProps> = ({content}) => {
   const frame = useCurrentFrame();
   const {px, portrait, width, height} = useLayout();
   const push = interpolate(frame, [0, 150], [1, 1.035], {
     extrapolateRight: 'clamp',
     easing: Easing.bezier(0.33, 0, 0.67, 1),
   });
-  const globeIn = interpolate(frame, [0, 40], [0, 1], {extrapolateRight: 'clamp'});
+  const globeIn = interpolate(frame, [30, 74], [0, 1], {extrapolateRight: 'clamp'});
 
   return (
     <>
@@ -38,11 +38,13 @@ export const Hook: React.FC<{content: AdContent}> = ({content}) => {
       </AbsoluteFill>
       <SceneFrame>
         <div style={{transform: `scale(${push})`, transformOrigin: 'left center'}}>
-          <Reveal delay={2}>
+          {/* +32 frame: il testo entra quando lo stacco marchio si apre
+              (OPEN_BUMPER_END in components/LogoBumper.tsx). */}
+          <Reveal delay={34}>
             <Kicker>{content.hook.kicker}</Kicker>
           </Reveal>
           <div style={{height: px(38)}} />
-          <Reveal delay={10} distance={34}>
+          <Reveal delay={42} distance={34}>
             <div
               style={{
                 fontSize: px(96),
@@ -55,7 +57,7 @@ export const Hook: React.FC<{content: AdContent}> = ({content}) => {
               {content.hook.lines[0]}
             </div>
           </Reveal>
-          <Reveal delay={30} distance={34}>
+          <Reveal delay={60} distance={34}>
             <div
               style={{
                 fontSize: px(96),

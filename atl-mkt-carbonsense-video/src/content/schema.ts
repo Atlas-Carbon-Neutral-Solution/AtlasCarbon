@@ -122,3 +122,9 @@ export type AdContent = {
     legal: string;
   };
 };
+
+/** Props di ogni scena: i contenuti e, quando serve, il marchio da `public/`. */
+export type SceneProps = {
+  content: AdContent;
+  logo?: string | null;
+};

@@ -11,10 +11,10 @@ import {
 import {FigureTwin} from '../components/figures';
 import {useLayout} from '../layout';
 import {palette, weight} from '../theme';
-import type {AdContent} from '../content/schema';
+import type {SceneProps} from '../content/schema';
 
 /** 5 · DIGITAL TWIN — 270 frame. Dalla certificazione alla gestione predittiva. */
-export const Twin: React.FC<{content: AdContent}> = ({content}) => {
+export const Twin: React.FC<SceneProps> = ({content}) => {
   const {px, portrait} = useLayout();
 
   return (
