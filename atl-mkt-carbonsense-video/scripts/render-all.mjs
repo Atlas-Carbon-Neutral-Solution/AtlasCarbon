@@ -22,7 +22,7 @@ const draft = flag('draft');
 const onlyLocale = value('only')?.toUpperCase() ?? null;
 const onlyRatio = value('ratio') ?? null;
 
-const RATIOS = ['16x9', '9x16', '1x1'];
+const RATIOS = ['16x9', '4x5', '1x1', '9x16'];
 const LOCALES = {IT: it, EN: en};
 const VERSION = 'v1';
 

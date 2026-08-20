@@ -5,6 +5,8 @@ export type Layout = {
   height: number;
   portrait: boolean;
   square: boolean;
+  /** Formati stretti: i contenuti si impilano e sotto restano i sottotitoli. */
+  stacked: boolean;
   /** Scala tipografica: 1 sul master 1920×1080, ridotta sui formati stretti. */
   scale: number;
   /** Da px del master a px del formato corrente. */
@@ -32,6 +34,7 @@ export const useLayout = (): Layout => {
     height,
     portrait,
     square,
+    stacked: portrait || square,
     scale,
     px,
     pad: portrait ? width * 0.08 : width * 0.09,

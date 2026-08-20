@@ -151,5 +151,7 @@ negli ultimi 2,6 s la lista sfuma e resta il payoff a tutto schermo.
 |---|---|---|
 | 60" 16:9 IT | sito, fiere, allegato commerciale | master |
 | 60" 16:9 EN | ESA BIC, investor, partner esteri | `content/en.ts` |
-| 60" 9:16 IT | LinkedIn, Instagram | stessa timeline, layout verticale automatico |
+| 60" 4:5 IT | **feed LinkedIn** | stessa timeline, layout impilato automatico, sottotitoli incisi |
+| 60" 1:1 IT | LinkedIn desktop, IG feed | come sopra |
+| 60" 9:16 IT | Stories, Reels | come sopra |
 | 20" cut | pre-roll / annuncio evento | scene 1 + 4 + 7 (ricalcolare `TIMELINE`) |

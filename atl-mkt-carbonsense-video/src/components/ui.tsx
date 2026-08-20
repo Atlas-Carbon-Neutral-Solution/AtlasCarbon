@@ -136,14 +136,19 @@ export const SceneFrame: React.FC<{
   justify?: React.CSSProperties['justifyContent'];
   children: React.ReactNode;
 }> = ({justify = 'center', children}) => {
-  const {pad, height, portrait} = useLayout();
+  const {pad, height, stacked} = useLayout();
 
   return (
     <AbsoluteFill
       style={{
         fontFamily: font.sans,
         color: palette.text,
-        padding: `${height * (portrait ? 0.16 : 0.13)}px ${pad}px`,
+        // Nei formati stretti il fondo è occupato dai sottotitoli incisi: lo
+        // spazio va riservato, non conteso.
+        paddingTop: height * (stacked ? 0.14 : 0.13),
+        paddingBottom: height * (stacked ? 0.22 : 0.13),
+        paddingLeft: pad,
+        paddingRight: pad,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: justify,
@@ -233,15 +238,15 @@ export const Split: React.FC<{
   left: React.ReactNode;
   right: React.ReactNode;
 }> = ({ratio = [1, 1], align = 'center', left, right}) => {
-  const {px, portrait} = useLayout();
+  const {px, stacked} = useLayout();
 
   return (
     <div
       style={{
         display: 'flex',
-        flexDirection: portrait ? 'column' : 'row',
-        alignItems: portrait ? 'stretch' : align,
-        gap: px(portrait ? 30 : 46),
+        flexDirection: stacked ? 'column' : 'row',
+        alignItems: stacked ? 'stretch' : align,
+        gap: px(stacked ? 26 : 46),
       }}
     >
       <div style={{flex: ratio[0], minWidth: 0}}>{left}</div>
@@ -398,7 +403,7 @@ export const ProgressRail: React.FC<{
  */
 export const Subtitles: React.FC<{text: string}> = ({text}) => {
   const frame = useCurrentFrame();
-  const {px, pad, portrait} = useLayout();
+  const {px, pad, stacked} = useLayout();
 
   return (
     <div
@@ -408,7 +413,7 @@ export const Subtitles: React.FC<{text: string}> = ({text}) => {
         right: pad,
         // In verticale i sottotitoli stanno più alti: sotto passa la barra di
         // avanzamento e, su Instagram, la UI dell'app.
-        bottom: px(portrait ? 150 : 62),
+        bottom: px(stacked ? 130 : 62),
         textAlign: 'center',
         fontFamily: font.sans,
         fontSize: px(26),

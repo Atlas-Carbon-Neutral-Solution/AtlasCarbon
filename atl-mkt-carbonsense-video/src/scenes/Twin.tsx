@@ -15,7 +15,7 @@ import type {SceneProps} from '../content/schema';
 
 /** 5 · DIGITAL TWIN — 270 frame. Dalla certificazione alla gestione predittiva. */
 export const Twin: React.FC<SceneProps> = ({content}) => {
-  const {px, portrait} = useLayout();
+  const {px} = useLayout();
 
   return (
     <>
@@ -28,7 +28,7 @@ export const Twin: React.FC<SceneProps> = ({content}) => {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: portrait ? '1fr 1fr' : '1fr 1fr',
+                gridTemplateColumns: '1fr 1fr',
                 gap: px(12),
               }}
             >

@@ -11,7 +11,7 @@ import type {SceneProps} from '../content/schema';
  * depositato" (docs/COMPLIANCE_DELTA.md righe 1 e 9).
  */
 export const WhyNow: React.FC<SceneProps> = ({content}) => {
-  const {px, portrait} = useLayout();
+  const {px, stacked} = useLayout();
   const cards = content.whyNow.cards;
 
   return (
@@ -19,7 +19,7 @@ export const WhyNow: React.FC<SceneProps> = ({content}) => {
       <Background tone="top-right" />
       <SceneFrame>
         <SceneHeader {...content.whyNow.heading} size={42} />
-        {portrait ? null : (
+        {stacked ? null : (
           <Reveal delay={16}>
             <div style={{marginBottom: px(26)}}>
               <FigureConvergence height={170} />
@@ -29,7 +29,7 @@ export const WhyNow: React.FC<SceneProps> = ({content}) => {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: portrait ? '1fr' : 'repeat(3, 1fr)',
+            gridTemplateColumns: stacked ? '1fr' : 'repeat(3, 1fr)',
             gap: px(14),
           }}
         >
@@ -63,7 +63,7 @@ export const WhyNow: React.FC<SceneProps> = ({content}) => {
             </Reveal>
           ))}
         </div>
-        {portrait ? (
+        {stacked ? (
           <Reveal delay={30}>
             <div style={{marginTop: px(24)}}>
               <FigureConvergence height={150} flip />

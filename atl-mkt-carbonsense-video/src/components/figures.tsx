@@ -44,7 +44,7 @@ const Svg: React.FC<{
   clip?: boolean;
   children: React.ReactNode;
 }> = ({viewBox, height, clip = false, children}) => {
-  const {px} = useLayout();
+  const {px, stacked} = useLayout();
 
   return (
     <svg
@@ -54,7 +54,7 @@ const Svg: React.FC<{
         display: 'block',
         width: '100%',
         height: 'auto',
-        maxHeight: px(height),
+        maxHeight: px(height) * (stacked ? 0.82 : 1),
         overflow: clip ? 'hidden' : 'visible',
       }}
     >

@@ -12,8 +12,9 @@ import {it} from './content/it';
  */
 const FORMATS = [
   {ratio: '16x9', width: 1920, height: 1080, subtitles: false},
-  {ratio: '9x16', width: 1080, height: 1920, subtitles: true},
+  {ratio: '4x5', width: 1080, height: 1350, subtitles: true},
   {ratio: '1x1', width: 1080, height: 1080, subtitles: true},
+  {ratio: '9x16', width: 1080, height: 1920, subtitles: true},
 ] as const;
 
 const LOCALES: {code: 'IT' | 'EN'; content: AdContent}[] = [

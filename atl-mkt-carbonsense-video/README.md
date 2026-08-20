@@ -53,7 +53,8 @@ npm run check:claims    # filtro anti-overclaim + vincoli di durata (blocca il r
 npm run typecheck       # contratto dati↔grafica
 npm run render:it       # 1920x1080 italiano
 npm run render:en       # 1920x1080 inglese (ESA BIC / investor)
-npm run render:social   # 1080x1920 verticale LinkedIn/IG
+npm run render:linkedin # 1080x1350 (4:5) — il formato del feed LinkedIn
+npm run render:social   # 1080x1920 verticale Stories/Reels
 npm run render:all      # tutti i formati registrati, naming Atlas automatico
 npm run still:cover     # frame di copertina PNG per il post
 ```
@@ -64,8 +65,18 @@ rifiuta il render pubblico; per i file di revisione interna si usa
 `npm run render:all -- --draft` (i file escono marcati `_DRAFT`).
 Filtri utili: `-- --only=IT`, `-- --ratio=16x9`.
 
-Composizioni registrate: `CarbonSense60-{IT,EN}-{16x9,9x16,1x1}`.
-I formati 9:16 e 1:1 hanno i sottotitoli incisi (autoplay muto).
+Composizioni registrate: `CarbonSense60-{IT,EN}-{16x9,4x5,1x1,9x16}`.
+
+| Formato | Dove | Note |
+|---|---|---|
+| 16:9 · 1920×1080 | sito, fiere, allegato commerciale, YouTube | senza sottotitoli incisi |
+| **4:5 · 1080×1350** | **feed LinkedIn** | il formato che occupa più schermo su mobile |
+| 1:1 · 1080×1080 | LinkedIn desktop, Instagram feed | |
+| 9:16 · 1080×1920 | Stories, Reels, TikTok | |
+
+Tutti i formati stretti (4:5, 1:1, 9:16) hanno i **sottotitoli incisi**: LinkedIn
+parte in autoplay muto e la maggior parte delle visualizzazioni resta senza audio.
+Il render è H.264 + AAC a 1080p, dentro le specifiche di upload nativo LinkedIn.
 
 Il render locale richiede FFmpeg (incluso in Remotion) e un browser headless
 (scaricato automaticamente al primo render: serve rete aperta verso i domini Remotion).
