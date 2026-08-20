@@ -47,7 +47,7 @@ export const Stack: React.FC<SceneProps> = ({content}) => {
                       opacity: frame >= start ? opacity : 0,
                       display: 'flex',
                       gap: px(20),
-                      borderLeft: `${px(3)}px solid ${isActive ? palette.green : 'transparent'}`,
+                      borderLeft: `${px(3)}px solid ${isActive ? palette.accent : 'transparent'}`,
                       paddingLeft: px(18),
                     }}
                   >
@@ -55,7 +55,7 @@ export const Stack: React.FC<SceneProps> = ({content}) => {
                       style={{
                         fontFamily: font.mono,
                         fontSize: px(19),
-                        color: isActive ? palette.greenSoft : palette.textFaint,
+                        color: isActive ? palette.accentSoft : palette.textFaint,
                         paddingTop: px(7),
                         width: px(40),
                         flexShrink: 0,

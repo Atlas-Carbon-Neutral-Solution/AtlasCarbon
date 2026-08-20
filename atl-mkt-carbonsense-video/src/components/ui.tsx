@@ -89,24 +89,24 @@ export const Background: React.FC<{grid?: boolean; tone?: Tone}> = ({
   const glow = GLOW[tone];
 
   return (
-    <AbsoluteFill style={{backgroundColor: palette.forest}}>
+    <AbsoluteFill style={{backgroundColor: palette.night}}>
       {/* Strato 1: volume del fondo. */}
       <AbsoluteFill
         style={{
-          background: `radial-gradient(110% 85% at ${glow.x} ${glow.y}, ${palette.canopy} 0%, ${palette.forest} 44%, ${palette.forestDeep} 100%)`,
+          background: `radial-gradient(110% 85% at ${glow.x} ${glow.y}, ${palette.canopy} 0%, ${palette.night} 44%, ${palette.nightDeep} 100%)`,
         }}
       />
       {/* Strato 2: alone verde, il punto luce della scena. */}
       <AbsoluteFill
         style={{
-          background: `radial-gradient(38% 42% at ${glow.x} ${glow.y}, rgba(47,191,113,0.20) 0%, rgba(47,191,113,0) 70%)`,
+          background: `radial-gradient(38% 42% at ${glow.x} ${glow.y}, rgba(79,163,220,0.20) 0%, rgba(79,163,220,0) 70%)`,
         }}
       />
       {/* Strato 3: riflesso freddo opposto, per staccare i piani. */}
       <AbsoluteFill
         style={{
           background:
-            'radial-gradient(50% 50% at 8% 92%, rgba(123,228,149,0.10) 0%, rgba(123,228,149,0) 68%)',
+            'radial-gradient(50% 50% at 8% 92%, rgba(122,192,67,0.12) 0%, rgba(122,192,67,0) 68%)',
         }}
       />
       {grid ? <OrbitalGrid /> : null}
@@ -170,7 +170,7 @@ export const Kicker: React.FC<{children: React.ReactNode}> = ({children}) => {
         fontSize: px(21),
         letterSpacing: px(3),
         textTransform: 'uppercase',
-        color: palette.greenSoft,
+        color: palette.accentSoft,
       }}
     >
       {children}
@@ -215,7 +215,7 @@ export const SceneHeader: React.FC<{
     <div style={{marginBottom: px(26)}}>
       <Reveal delay={delay}>
         <div style={{display: 'flex', alignItems: 'center', gap: px(14)}}>
-          <div style={{width: px(34), height: px(2), backgroundColor: palette.green}} />
+          <div style={{width: px(34), height: px(2), backgroundColor: palette.accent}} />
           <Kicker>{label}</Kicker>
         </div>
       </Reveal>
@@ -283,7 +283,7 @@ export const AccentBar: React.FC<{children: React.ReactNode}> = ({children}) => 
 
   return (
     <div style={{display: 'flex', gap: px(24), alignItems: 'stretch'}}>
-      <div style={{width: px(5), backgroundColor: palette.green, borderRadius: px(3)}} />
+      <div style={{width: px(5), backgroundColor: palette.accent, borderRadius: px(3)}} />
       <div style={{fontSize: px(40), fontWeight: weight.medium, lineHeight: 1.2}}>{children}</div>
     </div>
   );
@@ -387,7 +387,7 @@ export const ProgressRail: React.FC<{
               style={{
                 width: `${fill * 100}%`,
                 height: '100%',
-                backgroundColor: palette.green,
+                backgroundColor: palette.accent,
               }}
             />
           </div>

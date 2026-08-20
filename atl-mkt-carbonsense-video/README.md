@@ -132,6 +132,7 @@ src/
 scripts/
   check-claims.mjs      guardrail anti-overclaim + vincoli di durata
   make-music.mjs        sintetizza la traccia musicale (nessuna licenza di terzi)
+  set-logo.mjs          installa il marchio in public/ e aggiorna Root.tsx
   render-all.mjs        render batch con naming ATL_MKT_* e gate approvazione
 docs/                   script/storyboard, delta di compliance, pipeline agente, sorgenti
 ```
@@ -161,6 +162,24 @@ Tre regole, perché una figura è una dichiarazione come il testo:
 Per aggiungere una figura a una scena nuova: si scrive in `figures.tsx`, si
 riempie la colonna con `Split` e si limita l'altezza con la prop `height`.
 
+## 4a. Colori
+
+`src/theme.ts` parte dai due colori del marchio Atlas — il blu del lettering e
+il verde del simbolo — e nel video gli dà un ruolo, non una decorazione:
+
+| Colore | Ruolo | Dove si vede |
+|---|---|---|
+| blu `brand.blue` | il dato, l'orbita, il registro: **ciò che valida** | accento dell'interfaccia, satelliti e fasci, strati 03–05 dello stack, curva simulata, convergenza normativa |
+| verde `brand.green` | il suolo, la biomassa, la misura in campo: **ciò che viene misurato** | punto di misura verificabile, sensore a terra e proof-of-location, strati 01–02, parcella e curva misurata |
+
+Il simbolo del marchio contiene entrambi, quindi il video li usa entrambi, e la
+scena Stack li mette in fila: si vede il dato salire dal verde del suolo al blu
+del registro.
+
+> I due esadecimali in `theme.ts` sono **stimati dall'immagine del marchio**. Se
+> il brand book ha i codici esatti, si correggono lì: nessun altro file contiene
+> esadecimali di brand.
+
 ## 4c. Marchio e audio
 
 **Stacchi marchio.** `OpenBumper` (frame 0–48) e `CloseBumper` (1746–1800) in
@@ -169,15 +188,18 @@ riempie la colonna con `Split` e si limita l'altezza con la prop `height`.
 dominio, come si aspetta chi guarda uno spot.
 
 **Marchio reale.** Il `Logo` usa il segnaposto vettoriale finché non riceve un
-file. Appena il marchio registrato (versione Capra) è disponibile:
+file. Appena avete il marchio:
 
 ```bash
-cp logo-atlas.svg public/            # o .png
-# poi in src/Root.tsx: logo: 'logo-atlas.svg'
+npm run set:logo -- ~/Downloads/logo-atlas.svg   # .svg, .png o .webp
+npm run set:logo -- --none                       # torna al segnaposto
 ```
 
-Nient'altro cambia: il file compare in apertura, in chiusura e nella scena CTA.
-Il segnaposto **non** è il marchio registrato e non va usato in pubblicazione.
+Lo script copia il file in `public/` e aggiorna il prop `logo` in `Root.tsx`:
+il marchio compare in apertura, in chiusura e nella scena CTA. Meglio un SVG —
+scala senza perdita su tutti i formati; un PNG deve avere lo sfondo
+trasparente, perché su fondo scuro un bianco si vede. Il segnaposto **non** è
+il marchio registrato e non va usato in pubblicazione.
 
 **Musica.** `public/music-atlas-ambient.mp3` è generata da
 `npm run make:music`: bordone in La minore, battito lento e un accento su ogni
@@ -213,6 +235,7 @@ i claim rimossi senza una decisione esplicita e tracciata.
 - Stacchi marchio in apertura e chiusura, con il segnaposto: il marchio registrato
   non è ancora nel progetto (§4c).
 - Musica generata dal progetto, attiva per default in tutte le composizioni.
+- Palette allineata ai colori del marchio (valori stimati dall'immagine: §4a).
 - Render verificato: still su tutte le scene e master 60" IT 16:9.
 - `meta.approvedBy` è `null` in entrambi i file: nessun output è pubblicabile.
 - Voiceover e musica non inclusi (`voiceover`/`music` a `null`): i testi VO

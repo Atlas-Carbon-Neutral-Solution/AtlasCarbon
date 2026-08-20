@@ -24,10 +24,10 @@ export const Logo: React.FC<{
     <Img src={staticFile(src)} style={{height: s, width: 'auto'}} />
   ) : (
     <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
-      <circle cx={24} cy={24} r={21} stroke={palette.greenSoft} strokeWidth={2} opacity={0.55} />
-      <path d="M24 41c0-9 5-15 13-17-1 10-6 16-13 17Z" fill={palette.green} opacity={0.9} />
-      <path d="M24 41c0-9-5-15-13-17 1 10 6 16 13 17Z" fill={palette.greenSoft} opacity={0.5} />
-      <path d="M24 41V19" stroke={palette.text} strokeWidth={2} strokeLinecap="round" />
+      <circle cx={24} cy={24} r={21} stroke={palette.accent} strokeWidth={2} opacity={0.55} />
+      <path d="M24 41c0-9 5-15 13-17-1 10-6 16-13 17Z" fill={palette.earth} opacity={0.9} />
+      <path d="M24 41c0-9-5-15-13-17 1 10 6 16 13 17Z" fill={palette.earthSoft} opacity={0.5} />
+      <path d="M24 41V19" stroke={palette.accentSoft} strokeWidth={2} strokeLinecap="round" />
     </svg>
   );
 

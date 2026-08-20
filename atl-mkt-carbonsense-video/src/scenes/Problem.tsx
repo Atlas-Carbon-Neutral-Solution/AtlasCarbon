@@ -34,7 +34,7 @@ export const Problem: React.FC<SceneProps> = ({content}) => {
                         width: px(8),
                         height: px(8),
                         borderRadius: px(8),
-                        backgroundColor: palette.green,
+                        backgroundColor: palette.accent,
                         flexShrink: 0,
                         transform: `translateY(${-px(4)}px)`,
                       }}

@@ -1,19 +1,42 @@
 /**
- * Palette e scala tipografica dello stampo.
- * I colori sono l'unico punto in cui si tocca l'identità visiva: le scene non
- * contengono valori esadecimali.
+ * Palette e tipografia dello stampo.
+ *
+ * I due colori del marchio Atlas — il blu del lettering e il verde del simbolo —
+ * sono la base di tutto il resto. Nel video hanno un ruolo diverso, non
+ * decorativo:
+ *   • blu  = dato, orbita, registro (ciò che valida)
+ *   • verde = suolo, biomassa, misura sul campo (ciò che viene misurato)
+ * Il simbolo del marchio contiene entrambi, quindi il video li usa entrambi.
+ *
+ * ATTENZIONE: i due valori qui sotto sono **stimati dall'immagine del marchio**.
+ * Se il brand book ha i codici esatti (o le coordinate Pantone/CMYK), si
+ * correggono qui e cambia tutto il progetto: nessun altro file contiene
+ * esadecimali di brand.
  */
+export const brand = {
+  blue: '#4FA3DC',
+  green: '#7AC043',
+} as const;
+
 export const palette = {
-  forest: '#04150F',
-  forestDeep: '#010A07',
-  canopy: '#0A2719',
+  /** Fondi: blu-verde profondo, così sposa i due colori del marchio. */
+  night: '#04141A',
+  nightDeep: '#020C11',
+  canopy: '#0A2833',
   moss: '#123A2B',
-  green: '#2FBF71',
-  greenSoft: '#7BE495',
-  text: '#EEF5F1',
-  textMuted: 'rgba(238, 245, 241, 0.62)',
-  textFaint: 'rgba(238, 245, 241, 0.38)',
-  line: 'rgba(123, 228, 149, 0.22)',
+
+  /** Accento primario: il blu del marchio. */
+  accent: brand.blue,
+  accentSoft: '#8FC9EC',
+
+  /** Accento secondario: il verde del marchio. */
+  earth: brand.green,
+  earthSoft: '#A2D77A',
+
+  text: '#EDF4F7',
+  textMuted: 'rgba(237, 244, 247, 0.62)',
+  textFaint: 'rgba(237, 244, 247, 0.38)',
+  line: 'rgba(143, 201, 236, 0.22)',
   panel: 'rgba(255, 255, 255, 0.04)',
 } as const;
 

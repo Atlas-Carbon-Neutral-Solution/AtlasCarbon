@@ -102,7 +102,7 @@ export const CarbonSenseAd: React.FC<CarbonSenseAdProps> = ({
   const frame = useCurrentFrame();
 
   return (
-    <AbsoluteFill style={{backgroundColor: palette.forest}}>
+    <AbsoluteFill style={{backgroundColor: palette.night}}>
       {TIMELINE.map((scene, i) => {
         const isLast = i === TIMELINE.length - 1;
         const Scene = scene.component;

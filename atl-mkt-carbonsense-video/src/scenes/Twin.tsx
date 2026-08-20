@@ -62,7 +62,7 @@ export const Twin: React.FC<SceneProps> = ({content}) => {
         />
         <div style={{height: px(28)}} />
         <Reveal delay={168} distance={14}>
-          <div style={{fontSize: px(29), fontWeight: weight.medium, color: palette.greenSoft}}>
+          <div style={{fontSize: px(29), fontWeight: weight.medium, color: palette.earthSoft}}>
             {content.twin.output}
           </div>
         </Reveal>

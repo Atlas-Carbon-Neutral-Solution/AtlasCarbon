@@ -71,7 +71,8 @@ consenziente.
 | Elemento | Scelta | Motivo |
 |---|---|---|
 | Musica | Generata dal progetto: bordone in La minore, battito lento, un accento su ogni stacco di scena | Una traccia di libreria va licenziata, archiviata e riesibita a ogni riuso (ESA, bandi, investor). Prodotta in casa è di Atlas e non ha nulla da dimostrare. Livello a −14 dBFS di picco: sopra ci va il voiceover. |
-| Marchio negli stacchi | Segnaposto vettoriale, sostituibile con un file in `public/` | Il marchio registrato non è nel progetto e in questo ambiente non era scaricabile (dominio bloccato dalla policy di rete). L'aggancio è pronto: file + una riga in `Root.tsx`. |
+| Marchio negli stacchi | Segnaposto vettoriale, sostituibile con `npm run set:logo -- <file>` | Il marchio registrato non è nel progetto: il dominio è bloccato dalla policy di rete di questo ambiente e il file non è mai arrivato su disco. L'aggancio è pronto e testato end-to-end. |
+| Palette del video | Costruita sui due colori del marchio: blu = dato/orbita/registro, verde = suolo/biomassa/misura | Prima il video era verde foresta, cioè un colore che il marchio non contiene: uno spot che non usa i colori del proprio marchio lavora contro il riconoscimento. **I due esadecimali sono stimati dall'immagine del marchio**: se il brand book ha i valori esatti vanno corretti in `src/theme.ts`, unico file con esadecimali di brand. |
 | Ultimo fotogramma | Marchio + dominio, nessun claim | È il fotogramma che resta sullo schermo dopo l'autoplay: non è il posto per un'affermazione che poi va difesa. |
 
 ## Deroghe redazionali del passaggio a video
@@ -117,13 +118,17 @@ allungare le scene in `TIMELINE`, non comprimere il parlato.
 7. **Sede operativa** — il deck indica "Piazza Giacomo Zanellato 23, Padova",
    i dati societari "Le Village by Crédit Agricole, Padova". Lo spot cita solo
    "Milano · Padova": se serve l'indirizzo, prima si allinea.
-8. **Marchio** — `Logo` in `src/components/logo.tsx` è un segnaposto astratto,
+8. **Colori del marchio** — i valori blu/verde in `src/theme.ts` sono stimati
+   dall'immagine, non presi dal brand book. Prima di una pubblicazione vanno
+   confermati o corretti: sono l'unico punto del progetto con esadecimali di
+   brand.
+9. **Marchio** — `Logo` in `src/components/logo.tsx` è un segnaposto astratto,
    non il marchio registrato (versione Capra). Compare in tre punti: stacco di
    apertura, scena CTA, stacco di chiusura. Serve il file reale in
    `public/logo-atlas.svg` più una riga in `Root.tsx` (README §4c) **prima di
    qualunque uscita pubblica**: uno spot che chiude su un marchio che non è il
    marchio registrato non è pubblicabile.
-9. **Ruolo del filtro automatico** — `npm run check:claims` intercetta le
+10. **Ruolo del filtro automatico** — `npm run check:claims` intercetta le
    violazioni meccaniche (superiorità, TRL unico, pricing, proiezioni, nomi di
    terzi, brevetto non "depositato", sforamenti di durata). Non decide se un
    claim si può fare: quello resta il gate compliance.

@@ -64,7 +64,7 @@ export const Hook: React.FC<SceneProps> = ({content}) => {
                 fontWeight: weight.semibold,
                 lineHeight: 1.06,
                 letterSpacing: px(-2),
-                color: palette.greenSoft,
+                color: palette.accentSoft,
                 textShadow: '0 6px 40px rgba(1,10,7,0.75)',
               }}
             >

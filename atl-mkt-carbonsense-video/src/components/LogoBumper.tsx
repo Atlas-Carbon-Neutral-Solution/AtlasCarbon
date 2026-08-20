@@ -35,7 +35,7 @@ const Sweep: React.FC<{progress: number}> = ({progress}) => {
         style={{
           width: `${width * 100}%`,
           height: '100%',
-          backgroundColor: palette.green,
+          backgroundColor: palette.accent,
         }}
       />
     </div>
@@ -57,11 +57,11 @@ export const OpenBumper: React.FC<{logo?: string | null}> = ({logo = null}) => {
 
   return (
     <AbsoluteFill
-      style={{opacity: veil, backgroundColor: palette.forestDeep, fontFamily: font.sans}}
+      style={{opacity: veil, backgroundColor: palette.nightDeep, fontFamily: font.sans}}
     >
       <AbsoluteFill
         style={{
-          background: `radial-gradient(42% 46% at 50% 46%, rgba(47,191,113,0.16) 0%, rgba(47,191,113,0) 72%)`,
+          background: `radial-gradient(42% 46% at 50% 46%, rgba(79,163,220,0.18) 0%, rgba(79,163,220,0) 72%)`,
         }}
       />
       <AbsoluteFill
@@ -96,11 +96,11 @@ export const CloseBumper: React.FC<{logo?: string | null; site: string}> = ({
 
   return (
     <AbsoluteFill
-      style={{opacity: veil, backgroundColor: palette.forestDeep, fontFamily: font.sans}}
+      style={{opacity: veil, backgroundColor: palette.nightDeep, fontFamily: font.sans}}
     >
       <AbsoluteFill
         style={{
-          background: `radial-gradient(44% 48% at 50% 44%, rgba(47,191,113,0.18) 0%, rgba(47,191,113,0) 74%)`,
+          background: `radial-gradient(44% 48% at 50% 44%, rgba(79,163,220,0.20) 0%, rgba(79,163,220,0) 74%)`,
         }}
       />
       <AbsoluteFill
@@ -120,7 +120,7 @@ export const CloseBumper: React.FC<{logo?: string | null; site: string}> = ({
             fontSize: px(24),
             letterSpacing: px(1.6),
             fontWeight: weight.regular,
-            color: palette.greenSoft,
+            color: palette.accentSoft,
           }}
         >
           {site}

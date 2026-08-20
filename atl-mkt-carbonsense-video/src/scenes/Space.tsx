@@ -55,7 +55,7 @@ export const Space: React.FC<SceneProps> = ({content}) => {
                           fontFamily: font.mono,
                           fontSize: px(18),
                           letterSpacing: px(1.4),
-                          color: palette.greenSoft,
+                          color: palette.accentSoft,
                         }}
                       >
                         {row.tag}

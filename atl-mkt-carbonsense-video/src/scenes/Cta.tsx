@@ -55,7 +55,7 @@ export const Cta: React.FC<SceneProps> = ({content, logo = null}) => {
             style={{
               fontFamily: font.mono,
               fontSize: px(24),
-              color: palette.greenSoft,
+              color: palette.accentSoft,
               display: 'flex',
               flexWrap: 'wrap',
               gap: px(26),

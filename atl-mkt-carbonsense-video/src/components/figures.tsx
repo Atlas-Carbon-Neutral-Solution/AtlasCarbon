@@ -13,6 +13,8 @@ import {font, palette} from '../theme';
  *   "schema illustrativo" (`meta.figureNote` nei contenuti);
  * - identità mai affidata al solo colore: linee tratteggiate/continue e
  *   etichette dirette, così restano leggibili anche stampate o in b/n;
+ * - i due colori del marchio hanno un ruolo fisso: verde per ciò che sta a
+ *   terra e viene misurato, blu per ciò che valida (orbita, dato, registro);
  * - un solo verde accento più i neutri della palette; niente scale arbitrarie.
  */
 
@@ -86,12 +88,12 @@ export const FigureGlobe: React.FC<FigureProps & {faint?: boolean}> = ({
     <Svg viewBox="-190 -190 380 380" height={height}>
       <defs>
         <radialGradient id="globeGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor={palette.green} stopOpacity={faint ? 0.1 : 0.22} />
-          <stop offset="100%" stopColor={palette.green} stopOpacity={0} />
+          <stop offset="0%" stopColor={palette.accent} stopOpacity={faint ? 0.1 : 0.22} />
+          <stop offset="100%" stopColor={palette.accent} stopOpacity={0} />
         </radialGradient>
       </defs>
       <circle r={r * 1.5} fill="url(#globeGlow)" />
-      <circle r={r} fill="none" stroke={palette.greenSoft} strokeWidth={1.6} opacity={faint ? 0.3 : 0.6} />
+      <circle r={r} fill="none" stroke={palette.accentSoft} strokeWidth={1.6} opacity={faint ? 0.3 : 0.6} />
 
       {/* Meridiani: l'ampiezza varia con la fase, così il globo sembra girare. */}
       {Array.from({length: 6}).map((_, i) => {
@@ -127,9 +129,9 @@ export const FigureGlobe: React.FC<FigureProps & {faint?: boolean}> = ({
       {/* La particella: un campo, non il pianeta intero. */}
       {faint ? null : (
         <g transform={`translate(${r * 0.42} ${-r * 0.3})`}>
-          <circle r={5 + pulse * 3} fill={palette.green} opacity={0.25} />
-          <circle r={4} fill={palette.greenSoft} />
-          <circle r={13 + pulse * 9} fill="none" stroke={palette.green} strokeWidth={1.2} opacity={0.7 - pulse * 0.5} />
+          <circle r={5 + pulse * 3} fill={palette.earth} opacity={0.25} />
+          <circle r={4} fill={palette.earthSoft} />
+          <circle r={13 + pulse * 9} fill="none" stroke={palette.earth} strokeWidth={1.2} opacity={0.7 - pulse * 0.5} />
         </g>
       )}
     </Svg>
@@ -156,7 +158,7 @@ export const FigureUncertainty: React.FC<FigureProps> = ({height = 300}) => {
         <path
           d={`M40 ${top} C 170 ${top - 22}, 320 ${top + 18}, 470 ${top - 6}
               L470 ${bottom - 6} C 320 ${bottom + 16}, 170 ${bottom - 20}, 40 ${bottom} Z`}
-          fill={palette.greenSoft}
+          fill={palette.earthSoft}
           fillOpacity={0.07}
           stroke={palette.textFaint}
           strokeWidth={1.4}
@@ -184,11 +186,11 @@ export const FigureUncertainty: React.FC<FigureProps> = ({height = 300}) => {
 
       {/* La misura verificabile: piena, ancorata, etichettata. */}
       <g opacity={point} transform="translate(430 132)">
-        <line x1={-388 * point} x2={0} y1={0} y2={0} stroke={palette.green} strokeWidth={2} />
-        <line x1={0} x2={0} y1={-46} y2={46} stroke={palette.green} strokeWidth={2} />
-        <circle r={8} fill={palette.green} />
-        <circle r={17} fill="none" stroke={palette.green} strokeWidth={1.4} opacity={0.55} />
-        <text x={0} y={-62} textAnchor="middle" style={{...labelStyle, fill: palette.greenSoft}}>
+        <line x1={-388 * point} x2={0} y1={0} y2={0} stroke={palette.earth} strokeWidth={2} />
+        <line x1={0} x2={0} y1={-46} y2={46} stroke={palette.earth} strokeWidth={2} />
+        <circle r={8} fill={palette.earth} />
+        <circle r={17} fill="none" stroke={palette.earth} strokeWidth={1.4} opacity={0.55} />
+        <text x={0} y={-62} textAnchor="middle" style={{...labelStyle, fill: palette.earthSoft}}>
           MISURA VERIFICABILE
         </text>
       </g>
@@ -200,8 +202,12 @@ export const FigureUncertainty: React.FC<FigureProps> = ({height = 300}) => {
  * 3 · Lo stack: cinque strati, dal suolo al registry.
  * ------------------------------------------------------------------ */
 /** Glifi degli strati: sensore, campo, orbita, motore, registro. */
-const LayerIcon: React.FC<{index: number; active: boolean}> = ({index, active}) => {
-  const stroke = active ? palette.greenSoft : palette.textFaint;
+const LayerIcon: React.FC<{index: number; active: boolean; tone: string}> = ({
+  index,
+  active,
+  tone,
+}) => {
+  const stroke = active ? tone : palette.textFaint;
 
   if (index === 0) {
     return (
@@ -261,18 +267,11 @@ export const FigureStackLayers: React.FC<FigureProps & {activeIndex: number}> = 
 
   return (
     <Svg viewBox="0 0 440 396" height={height}>
-      <defs>
-        <linearGradient id="layerActive" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor={palette.green} stopOpacity={0.28} />
-          <stop offset="100%" stopColor={palette.green} stopOpacity={0.08} />
-        </linearGradient>
-      </defs>
-
       {/* Orientamento: due parole, non la ripetizione dei cinque passaggi. */}
-      <text x={220} y={12} textAnchor="middle" style={{...labelStyle, fill: palette.greenSoft}}>
+      <text x={220} y={12} textAnchor="middle" style={{...labelStyle, fill: palette.accentSoft}}>
         REGISTRY
       </text>
-      <text x={220} y={390} textAnchor="middle" style={labelStyle}>
+      <text x={220} y={390} textAnchor="middle" style={{...labelStyle, fill: palette.earthSoft}}>
         SUOLO
       </text>
       {Array.from({length: layers}).map((_, i) => {
@@ -282,6 +281,9 @@ export const FigureStackLayers: React.FC<FigureProps & {activeIndex: number}> = 
         const seen = indexFromBottom <= activeIndex;
         const y = i * (layerHeight + gap) + 28;
         const inset = i * 13;
+        // I primi due strati stanno a terra, gli altri tre nel dato.
+        const tone = indexFromBottom <= 1 ? palette.earth : palette.accent;
+        const toneSoft = indexFromBottom <= 1 ? palette.earthSoft : palette.accentSoft;
 
         return (
           <g key={i}>
@@ -291,9 +293,9 @@ export const FigureStackLayers: React.FC<FigureProps & {activeIndex: number}> = 
               width={380 - inset * 2}
               height={layerHeight}
               rx={9}
-              fill={isActive ? 'url(#layerActive)' : palette.greenSoft}
-              fillOpacity={isActive ? 1 : seen ? 0.07 : 0.03}
-              stroke={isActive ? palette.green : palette.line}
+              fill={tone}
+              fillOpacity={isActive ? 0.2 : seen ? 0.08 : 0.03}
+              stroke={isActive ? tone : palette.line}
               strokeWidth={isActive ? 2.2 : 1.2}
             />
             <text
@@ -302,13 +304,13 @@ export const FigureStackLayers: React.FC<FigureProps & {activeIndex: number}> = 
               style={{
                 ...labelStyle,
                 fontSize: 14,
-                fill: isActive ? palette.greenSoft : palette.textFaint,
+                fill: isActive ? toneSoft : palette.textFaint,
               }}
             >
               {`0${indexFromBottom + 1}`}
             </text>
             <g transform={`translate(${380 - inset} ${y + layerHeight / 2}) scale(1.45)`}>
-              <LayerIcon index={indexFromBottom} active={isActive} />
+              <LayerIcon index={indexFromBottom} active={isActive} tone={toneSoft} />
             </g>
           </g>
         );
@@ -325,7 +327,7 @@ export const FigureStackLayers: React.FC<FigureProps & {activeIndex: number}> = 
           strokeWidth={1}
           strokeDasharray="4 8"
         />
-        <circle cx={220} cy={interpolate(rise, [0, 1], [366, 30])} r={5} fill={palette.greenSoft} />
+        <circle cx={220} cy={interpolate(rise, [0, 1], [366, 30])} r={5} fill={palette.accentSoft} />
       </g>
     </Svg>
   );
@@ -353,8 +355,8 @@ export const FigureOrbit: React.FC<FigureProps> = ({height = 380}) => {
   return (
     <Svg viewBox="0 0 420 360" height={height} clip>
       {/* Orbite. */}
-      <ellipse cx={210} cy={150} rx={180} ry={70} fill="none" stroke={palette.greenSoft} strokeWidth={1.2} opacity={0.32} />
-      <ellipse cx={210} cy={122} rx={140} ry={52} fill="none" stroke={palette.greenSoft} strokeWidth={1} opacity={0.22} />
+      <ellipse cx={210} cy={150} rx={180} ry={70} fill="none" stroke={palette.accentSoft} strokeWidth={1.2} opacity={0.32} />
+      <ellipse cx={210} cy={122} rx={140} ry={52} fill="none" stroke={palette.accentSoft} strokeWidth={1} opacity={0.22} />
 
       {/* Terra: un arco, non un pianeta intero. */}
       <path d="M0 360 C 80 276, 340 276, 420 360 Z" fill={palette.canopy} stroke={palette.line} strokeWidth={1.2} />
@@ -377,9 +379,9 @@ export const FigureOrbit: React.FC<FigureProps> = ({height = 380}) => {
 
       {/* Fascio SAR: passa oltre lo strato nuvole. */}
       <g opacity={0.35 + sar * 0.5}>
-        <path d={`M${a.x} ${a.y} L${196} 300 L${228} 300 Z`} fill={palette.green} fillOpacity={0.16} />
-        <line x1={a.x} y1={a.y} x2={212} y2={300} stroke={palette.green} strokeWidth={1.8} />
-        <text x={a.x + 10} y={a.y - 12} style={{...labelStyle, fill: palette.greenSoft}}>
+        <path d={`M${a.x} ${a.y} L${196} 300 L${228} 300 Z`} fill={palette.accent} fillOpacity={0.16} />
+        <line x1={a.x} y1={a.y} x2={212} y2={300} stroke={palette.accent} strokeWidth={1.8} />
+        <text x={a.x + 10} y={a.y - 12} style={{...labelStyle, fill: palette.accentSoft}}>
           SAR
         </text>
       </g>
@@ -391,7 +393,7 @@ export const FigureOrbit: React.FC<FigureProps> = ({height = 380}) => {
           y1={b.y}
           x2={252}
           y2={236}
-          stroke={palette.greenSoft}
+          stroke={palette.accentSoft}
           strokeWidth={1.4}
           strokeDasharray="6 7"
         />
@@ -404,19 +406,19 @@ export const FigureOrbit: React.FC<FigureProps> = ({height = 380}) => {
       {[a, b].map((p, i) => (
         <g key={i} transform={`translate(${p.x} ${p.y}) scale(1.5)`}>
           <rect x={-9} y={-6} width={18} height={12} rx={3} fill={palette.text} opacity={0.9} />
-          <rect x={-20} y={-3} width={9} height={6} rx={2} fill={palette.greenSoft} />
-          <rect x={11} y={-3} width={9} height={6} rx={2} fill={palette.greenSoft} />
+          <rect x={-20} y={-3} width={9} height={6} rx={2} fill={palette.accentSoft} />
+          <rect x={11} y={-3} width={9} height={6} rx={2} fill={palette.accentSoft} />
         </g>
       ))}
 
       {/* Sensore a terra con proof-of-location. */}
       <g transform="translate(212 300)">
         <line x1={0} y1={0} x2={0} y2={-26} stroke={palette.text} strokeWidth={2} />
-        <circle cy={-30} r={5} fill={palette.green} />
+        <circle cy={-30} r={5} fill={palette.earth} />
         <circle r={3} fill={palette.text} />
-        <circle r={14} fill="none" stroke={palette.green} strokeWidth={1.2} opacity={0.6} />
-        <line x1={-26} x2={26} y1={0} y2={0} stroke={palette.green} strokeWidth={1} opacity={0.5} />
-        <text x={0} y={34} textAnchor="middle" style={{...labelStyle, fill: palette.greenSoft}}>
+        <circle r={14} fill="none" stroke={palette.earth} strokeWidth={1.2} opacity={0.6} />
+        <line x1={-26} x2={26} y1={0} y2={0} stroke={palette.earth} strokeWidth={1} opacity={0.5} />
+        <text x={0} y={34} textAnchor="middle" style={{...labelStyle, fill: palette.earthSoft}}>
           PROOF-OF-LOCATION
         </text>
       </g>
@@ -441,8 +443,8 @@ export const FigureTwin: React.FC<FigureProps> = ({height = 330}) => {
     <Svg viewBox="0 0 460 320" height={height}>
       <defs>
         <linearGradient id="twinArea" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={palette.green} stopOpacity={0.22} />
-          <stop offset="100%" stopColor={palette.green} stopOpacity={0} />
+          <stop offset="0%" stopColor={palette.earth} stopOpacity={0.22} />
+          <stop offset="100%" stopColor={palette.earth} stopOpacity={0} />
         </linearGradient>
       </defs>
 
@@ -467,7 +469,7 @@ export const FigureTwin: React.FC<FigureProps> = ({height = 330}) => {
             y1={286 - i * 9}
             x2={418 - i * 7}
             y2={286 - i * 9}
-            stroke={palette.greenSoft}
+            stroke={palette.earthSoft}
             strokeWidth={1}
             opacity={0.26}
           />
@@ -479,7 +481,7 @@ export const FigureTwin: React.FC<FigureProps> = ({height = 330}) => {
             y1={286}
             x2={74 + i * 46}
             y2={250}
-            stroke={palette.greenSoft}
+            stroke={palette.earthSoft}
             strokeWidth={1}
             opacity={0.26}
           />
@@ -497,14 +499,14 @@ export const FigureTwin: React.FC<FigureProps> = ({height = 330}) => {
       <path
         d={measuredPath}
         fill="none"
-        stroke={palette.green}
+        stroke={palette.earth}
         strokeWidth={3}
         strokeLinecap="round"
         pathLength={1}
         strokeDasharray={1}
         strokeDashoffset={1 - measured}
       />
-      <text x={50} y={274} style={{...labelStyle, fill: palette.greenSoft}}>
+      <text x={50} y={274} style={{...labelStyle, fill: palette.earthSoft}}>
         MISURATO
       </text>
 
@@ -529,19 +531,19 @@ export const FigureTwin: React.FC<FigureProps> = ({height = 330}) => {
       <path
         d={simulatedPath}
         fill="none"
-        stroke={palette.greenSoft}
+        stroke={palette.accent}
         strokeWidth={2.6}
         strokeDasharray="9 7"
         strokeLinecap="round"
         opacity={simulated}
       />
-      <text x={342} y={52} style={{...labelStyle, fill: palette.textMuted}} opacity={simulated}>
+      <text x={342} y={52} style={{...labelStyle, fill: palette.accentSoft}} opacity={simulated}>
         SIMULATO
       </text>
 
       {/* Anomalia intercettata sul misurato. */}
       <g opacity={anomaly} transform="translate(202 178)">
-        <circle r={8} fill={palette.forest} stroke={palette.text} strokeWidth={1.8} />
+        <circle r={8} fill={palette.night} stroke={palette.text} strokeWidth={1.8} />
         <line x1={-4} y1={-4} x2={4} y2={4} stroke={palette.text} strokeWidth={1.6} />
         <line x1={4} y1={-4} x2={-4} y2={4} stroke={palette.text} strokeWidth={1.6} />
         <line x1={0} y1={-14} x2={0} y2={-30} stroke={palette.textMuted} strokeWidth={1} />
@@ -588,7 +590,7 @@ export const FigureConvergence: React.FC<FigureProps & {flip?: boolean}> = ({
             <path
               d={path}
               fill="none"
-              stroke={palette.green}
+              stroke={palette.accent}
               strokeWidth={1.6}
               opacity={0.6}
               pathLength={1}
@@ -600,7 +602,7 @@ export const FigureConvergence: React.FC<FigureProps & {flip?: boolean}> = ({
               cx={x + (endX - x) * travel}
               cy={startY + (endY - startY) * travel}
               r={3.5}
-              fill={palette.greenSoft}
+              fill={palette.accentSoft}
               opacity={grow * 0.9}
             />
           </g>
@@ -614,9 +616,9 @@ export const FigureConvergence: React.FC<FigureProps & {flip?: boolean}> = ({
           width={276}
           height={70}
           rx={12}
-          fill={palette.green}
+          fill={palette.accent}
           fillOpacity={0.14}
-          stroke={palette.green}
+          stroke={palette.accent}
           strokeWidth={1.8}
         />
         <text
