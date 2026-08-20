@@ -1,0 +1,30 @@
+{
+  "name": "atl-mkt-carbonsense-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pipeline Remotion per gli spot Atlas — primo output: CarbonSense 60\"",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "remotion studio",
+    "render:it": "remotion render CarbonSense60-IT-16x9 out/ATL_MKT_CarbonSense_Video60_IT_16x9_v1.mp4",
+    "render:en": "remotion render CarbonSense60-EN-16x9 out/ATL_MKT_CarbonSense_Video60_EN_16x9_v1.mp4",
+    "render:linkedin": "remotion render CarbonSense60-IT-4x5 out/ATL_MKT_CarbonSense_Video60_IT_4x5_v1.mp4",
+    "render:social": "remotion render CarbonSense60-IT-9x16 out/ATL_MKT_CarbonSense_Video60_IT_9x16_v1.mp4",
+    "render:all": "node scripts/render-all.mjs",
+    "still:cover": "remotion still CarbonSense60-IT-16x9 out/ATL_MKT_CarbonSense_Cover_IT_v1.png --frame=90",
+    "set:logo": "node scripts/set-logo.mjs",
+    "make:music": "node scripts/make-music.mjs",
+    "check:claims": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-claims.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.443",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "remotion": "4.0.443"
+  },
+  "devDependencies": {
+    "@types/react": "19.0.0",
+    "typescript": "5.8.3"
+  }
+}
